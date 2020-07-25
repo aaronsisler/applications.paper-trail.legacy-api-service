@@ -1,0 +1,4 @@
+{
+  "*.js": ["npm run lint --fix", "git add ."],
+  "*.{js,json}": ["prettier --write", "git add ."]
+}

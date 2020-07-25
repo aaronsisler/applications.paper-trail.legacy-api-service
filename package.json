@@ -1,0 +1,34 @@
+{
+  "name": "paper-trail-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint \"./**/*.js\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aaronsisler/applications.paper-trail-service.git"
+  },
+  "author": "Aaron Sisler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aaronsisler/applications.paper-trail-service/issues"
+  },
+  "homepage": "https://github.com/aaronsisler/applications.paper-trail-service#readme",
+  "devDependencies": {
+    "eslint": "^7.5.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
+    "prettier": "^2.0.5",
+    "typescript": "^3.9.7"
+  }
+}
