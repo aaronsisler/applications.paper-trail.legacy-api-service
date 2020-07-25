@@ -19,8 +19,8 @@ module.exports = {
       branches: 100,
       functions: 100,
       lines: 100,
-      statements: 100,
-    },
+      statements: 100
+    }
   },
 
   // An array of directory names to be searched recursively up from the requiring module's location
@@ -34,5 +34,5 @@ module.exports = {
 
   // An array of regexp pattern strings that are matched against all test paths
   // Matched tests are skipped
-  testPathIgnorePatterns: ["/node_modules/"],
+  testPathIgnorePatterns: ["/node_modules/"]
 };
