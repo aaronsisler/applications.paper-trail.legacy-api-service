@@ -19,6 +19,7 @@
     "arrow-parens": "off",
     "comma-dangle": "off",
     "implicit-arrow-linebreak": "off",
+    "operator-linebreak": ["error", "after"],
     "prettier/prettier": [
       "error",
       {
