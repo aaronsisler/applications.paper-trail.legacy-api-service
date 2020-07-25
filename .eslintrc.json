@@ -17,7 +17,7 @@
   "rules": {
     "quotes": "off",
     "arrow-parens": "off",
-    "comma-dangle": "off",
+    "comma-dangle": ["error", "never"],
     "implicit-arrow-linebreak": "off",
     "operator-linebreak": ["error", "after"],
     "prettier/prettier": [
