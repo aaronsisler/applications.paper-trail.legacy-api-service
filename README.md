@@ -1,6 +1,6 @@
 # Paper Trail Service
 
-This service is utilized by all E&B Solutions' deployed applications.
+This service is utilized by Paper Trail UI.
 
 ## Usage:
 
