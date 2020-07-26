@@ -1,7 +1,7 @@
-const { healthService } = require("./health-service");
+const { healthService } = require("../../services/health-service");
 const { handler } = require("./index");
 
-jest.mock("./health-service");
+jest.mock("../../services/health-service");
 
 describe("healthService index", () => {
   const mockHealthServiceResponse = { returned: "value" };

@@ -1,4 +1,4 @@
-const { healthService } = require("./health-service");
+const { healthService } = require("../../services/health-service");
 
 exports.handler = (event, context, callback) => {
   const response = healthService();
