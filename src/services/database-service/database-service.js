@@ -1,24 +1,26 @@
 const aws = require("aws-sdk");
 
-const region = "us-east-1";
+exports.databaseService = async () => {
+  const region = "us-east-1";
 
-aws.config.update({ region });
+  aws.config.update({ region });
 
-const ddb = new aws.DynamoDB({ apiVersion: "2012-08-10" });
+  const ddb = new aws.DynamoDB({ apiVersion: "2012-08-10" });
 
-const params = {
-  TableName: "TABLE",
-  Key: {
-    userId: { N: "123" }
-  },
-  ProjectionExpression: "ATTRIBUTE_NAME"
-};
+  const params = {
+    TableName: "PAPER_TRAIL_SERVICE_POC",
+    Key: {
+      userId: { S: "123" }
+    }
+  };
 
-// Call DynamoDB to read the item from the table
-ddb.getItem(params, (err, data) => {
-  if (err) {
-    console.log("Error", err);
-  } else {
-    console.log("Success", data.Item);
+  try {
+    const { Item: item } = await ddb.getItem(params).promise();
+    return { statusCode: 200, body: item };
+  } catch (err) {
+    return {
+      statusCode: 500,
+      body: { message: "Something went wrong", error: err }
+    };
   }
-});
+};
