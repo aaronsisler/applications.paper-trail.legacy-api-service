@@ -1,13 +1,13 @@
 import express from "express";
-import healthService from "./services/health-service";
+import { healthService } from "./services/health-service";
 
 const app = express();
 const port = process.env.PORT || "9001";
 
 app.get("/health", (_req, res) => {
-  const { statusCode, body } = healthService();
+  const body = healthService();
 
-  return res.status(statusCode).json(body);
+  return res.status(200).json(body);
 });
 
 app.listen(port, (err) => {
