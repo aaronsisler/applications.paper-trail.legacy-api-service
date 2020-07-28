@@ -12,9 +12,9 @@
     "test:watch": "jest --watch",
     "clear-serverless": "rm -rf ./.serverless",
     "create-domain:beta": "sls create_domain --config=./deploy/serverless.beta.yml",
-    "xcreate-domain:prod": "sls create_domain --config=./deploy/serverless.prod.yml",
+    "create-domain:prod": "sls create_domain --config=./deploy/serverless.prod.yml",
     "deploy:beta": "npm run build && sls deploy --config=./deploy/serverless.beta.yml",
-    "xdeploy:prod": "npm run build && sls deploy --config=./deploy/serverless.prod.yml",
+    "deploy:prod": "npm run build && sls deploy --config=./deploy/serverless.prod.yml",
     "test:health": "serverless invoke --function health --config=./deploy/serverless.beta.yml"
   },
   "engines": {
