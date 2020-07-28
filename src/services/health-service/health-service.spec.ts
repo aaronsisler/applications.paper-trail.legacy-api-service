@@ -17,6 +17,9 @@ describe("healthService", () => {
   it("should return the correct timestamp", () => {
     const { currentTime } = health;
 
-    expect(currentTime).toContain(":");
+    // 19:22:51 GMT+0000 (Coordinated Universal Time)
+    expect(currentTime).toMatch(
+      /^[0-9]{2}:[0-9]{2}:[0-9]{2} [A-Z]{3}(\+|-)[0-9]{4} \(\w+ \w+ Time\)$/
+    );
   });
 });
