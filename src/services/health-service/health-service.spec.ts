@@ -1,7 +1,7 @@
-const { healthService } = require("./health-service");
+import { healthService } from "./index";
 
 describe("healthService", () => {
-  let response;
+  let response: any;
 
   beforeEach(() => {
     response = healthService();
