@@ -1,7 +1,7 @@
-import { healthService } from "./index";
+import healthService, { HealthServiceResponse } from "./index";
 
 describe("healthService", () => {
-  let response: any;
+  let response: HealthServiceResponse;
 
   beforeEach(() => {
     response = healthService();
@@ -12,12 +12,23 @@ describe("healthService", () => {
 
     expect(statusCode).toEqual(200);
   });
+  describe("when body is returned", () => {
+    let body: HealthServiceResponse["body"];
 
-  it("should return the correct body", () => {
-    const { body } = response;
-    const expectedPartialResponse =
-      '{"message":"Hello, it looks like this service is working.","currentTime":"The current time is';
+    beforeEach(() => {
+      body = response.body;
+    });
 
-    expect(body).toContain(expectedPartialResponse);
+    it("should return the correct message", () => {
+      const { message } = body;
+
+      expect(message).toEqual("Hello, it looks like this service is working.");
+    });
+
+    it("should return the correct timestamp", () => {
+      const { currentTime } = body;
+
+      expect(currentTime).toContain("The current time is ");
+    });
   });
 });

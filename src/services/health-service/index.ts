@@ -1,3 +1,3 @@
-import { healthService } from "./health-service";
+import healthService, { HealthServiceResponse } from "./health-service";
 
-export { healthService };
+export { healthService as default, HealthServiceResponse };

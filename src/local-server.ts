@@ -1,5 +1,5 @@
 import express from "express";
-import { healthService } from "./services/health-service";
+import healthService from "./services/health-service";
 
 const app = express();
 const port = process.env.PORT || "9001";

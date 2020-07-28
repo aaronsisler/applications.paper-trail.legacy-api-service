@@ -2,11 +2,9 @@ import { handler } from "./index";
 
 const mockHealthServiceResponse = { returned: "value" };
 
-jest.mock("../../services/health-service", () => {
-  return {
-    healthService: () => mockHealthServiceResponse
-  };
-});
+jest.mock("../../services/health-service", () => () =>
+  mockHealthServiceResponse
+);
 
 describe("healthService index", () => {
   it("should call process with correct arguments", () => {
