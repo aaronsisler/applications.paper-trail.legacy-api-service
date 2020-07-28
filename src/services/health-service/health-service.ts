@@ -1,22 +1,13 @@
-interface HealthServiceResponse {
-  statusCode: number;
-  body: {
-    message: string;
-    currentTime: string;
-  };
-}
+import { Health } from "../../models/health";
 
 const healthService = () => {
   const currentTime = new Date().toTimeString();
-  const response: HealthServiceResponse = {
-    statusCode: 200,
-    body: {
-      message: "Hello, it looks like this service is working.",
-      currentTime: `The current time is ${currentTime}.`
-    }
+  const health: Health = {
+    message: "Hello! It looks like this service is working.",
+    currentTime
   };
 
-  return response;
+  return health;
 };
 
-export { healthService as default, HealthServiceResponse };
+export { healthService };
