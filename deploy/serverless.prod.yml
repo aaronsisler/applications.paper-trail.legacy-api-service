@@ -1,0 +1,37 @@
+service: paper-trail-service
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: prod
+  region: us-east-1
+  role: arn:aws:iam::654918520080:role/APIG-LAMBDA-DDB
+  usagePlan:
+    quota:
+      limit: 500
+      offset: 0
+      period: MONTH
+    throttle:
+      burstLimit: 20
+      rateLimit: 10
+  environment:
+    NODE_ENV: prod
+
+functions:
+  health:
+    handler: dist/handlers/health-handler/index.handler
+    description: Gateway health check. Responds with current time and a short message.
+    events:
+      - http:
+          path: /health
+          method: get
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  customDomain:
+    domainName: services.otterandcow.com
+    basePath: "prod"
+    stage: prod
+    createRoute53Record: true

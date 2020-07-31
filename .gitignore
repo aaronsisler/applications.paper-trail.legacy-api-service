@@ -3,6 +3,8 @@ node_modules/
 .vscode/
 
 # Build files
+/dist
+/.serverless
 
 # Secrets
 
