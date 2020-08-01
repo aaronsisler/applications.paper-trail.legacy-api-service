@@ -13,18 +13,24 @@ jest.mock("../../utils/response-body-builder", () => {
 });
 
 describe("health handler", () => {
-  let callback: Function;
-
-  beforeEach(() => {
-    callback = jest.fn();
-    handler(undefined, undefined, callback);
+  it("should be a function", () => {
+    expect(typeof handler).toEqual("function");
   });
 
-  it("should call response body builder with correct arguments", () => {
-    expect(responseBodyBuilder).toHaveBeenCalledWith(mockResponse);
-  });
+  describe("when handler is invoked", () => {
+    let callback: Function;
 
-  it("should envoke callback with correct arguments", () => {
-    expect(callback).toHaveBeenCalledWith(null, "body-built-response");
+    beforeEach(() => {
+      callback = jest.fn();
+      handler(undefined, undefined, callback);
+    });
+
+    it("should call response body builder with correct arguments", () => {
+      expect(responseBodyBuilder).toHaveBeenCalledWith(mockResponse);
+    });
+
+    it("should envoke callback with correct arguments", () => {
+      expect(callback).toHaveBeenCalledWith(null, "body-built-response");
+    });
   });
 });

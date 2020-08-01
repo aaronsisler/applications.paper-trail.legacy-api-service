@@ -1,16 +1,20 @@
-import { healthService } from "../../services/health-service";
 import { SuccessResponse } from "../../models/success-response";
-import { Health } from "../../models/health";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 
-const health = (_event: any, _context: any, callback: any) => {
-  const health: Health = healthService();
+const userGet = (_event: any, _context: any, callback: any) => {
+  // const params = {
+  //   TableName: "PAPER_TRAIL_SERVICE_POC",
+  //   Key: {
+  //     userId: { S: "123" }
+  //   }
+  // };
+
   const response: SuccessResponse = responseBodyBuilder({
     statusCode: 200,
-    body: health
+    body: ""
   });
 
   callback(null, response);
 };
 
-export { health };
+export { userGet };
