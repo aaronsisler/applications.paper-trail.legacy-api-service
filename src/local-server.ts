@@ -12,10 +12,11 @@ app.get("/health", (_req, res) => {
   return res.status(200).json(body);
 });
 
-app.get("/user", async (_req, res) => {
+app.get("/user/:userId", async (req, res) => {
   const userService = new UserService();
-  const user: User = await userService.getUser("123");
-  console.log("Server", user);
+  const { userId } = req.params;
+  const user: User = await userService.getUser(userId);
+
   return res.status(200).json({ user });
 });
 

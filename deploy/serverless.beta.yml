@@ -25,6 +25,17 @@ functions:
       - http:
           path: /health
           method: get
+  user:
+    handler: dist/handlers/user-get-handler/index.handler
+    description: Retrive user with userId paramater. Responds with user information.
+    events:
+      - http:
+          path: /user/{userId}
+          method: get
+          request:
+            parameters:
+              paths:
+                userId: true
 
 plugins:
   - serverless-domain-manager
