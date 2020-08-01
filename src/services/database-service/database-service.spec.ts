@@ -1,7 +1,7 @@
 import { DatabaseService } from "./index";
 import aws from "aws-sdk";
 
-let mockDDBItem = jest.fn().mockResolvedValue({ Item: "taco" });
+let mockDDBItem = jest.fn().mockResolvedValue({ Item: "mock-item" });
 jest.mock("aws-sdk", () => {
   return {
     config: {
@@ -53,7 +53,7 @@ describe("databaseService", () => {
         });
 
         it("should return the correct item", () => {
-          expect(returnedItem).toEqual("taco");
+          expect(returnedItem).toEqual("mock-item");
         });
       });
 
