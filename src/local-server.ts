@@ -1,5 +1,7 @@
 import express from "express";
 import { healthService } from "./services/health-service";
+import { UserService } from "./services/user-service";
+import { User } from "./models/user";
 
 const app = express();
 const port = process.env.PORT || "9001";
@@ -8,6 +10,13 @@ app.get("/health", (_req, res) => {
   const body = healthService();
 
   return res.status(200).json(body);
+});
+
+app.get("/user", async (_req, res) => {
+  const userService = new UserService();
+  const user: User = await userService.getUser("123");
+  console.log("Server", user);
+  return res.status(200).json({ user });
 });
 
 app.listen(port, (err) => {
