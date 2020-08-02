@@ -1,7 +1,7 @@
 import { DatabaseService } from "./index";
 import aws from "aws-sdk";
 
-let mockDDBItem = jest.fn().mockResolvedValue({ Item: "mock-item" });
+let mockDDBItem: jest.Mock;
 jest.mock("aws-sdk", () => {
   return {
     config: {
@@ -18,8 +18,9 @@ describe("DatabaseService", () => {
   let consoleLog: any;
 
   beforeEach(() => {
-    consoleLog = console.log;
     databaseService = new DatabaseService();
+    mockDDBItem = jest.fn().mockResolvedValue({ Item: "mock-item" });
+    consoleLog = console.log;
     console.log = jest.fn();
   });
 
@@ -42,34 +43,98 @@ describe("DatabaseService", () => {
     });
   });
 
-  describe("getItem()", () => {
-    describe("when it is invoked", () => {
-      let returnedItem: any;
+  describe("when getItem is invoked with a string", () => {
+    let returnedItem: any;
 
-      describe("and the call is successful", () => {
-        beforeEach(async () => {
-          returnedItem = await databaseService.getItem("userId", "123");
-        });
-
-        it("should return the correct item", () => {
-          expect(returnedItem).toEqual("mock-item");
-        });
+    describe("and the call is successful", () => {
+      beforeEach(async () => {
+        returnedItem = await databaseService.getItem(
+          "mock-string-key",
+          "mock-string"
+        );
       });
 
-      describe("and the call is NOT successful", () => {
-        beforeEach(async () => {
-          mockDDBItem = jest.fn().mockRejectedValue({});
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual("mock-item");
+      });
+    });
 
-          returnedItem = await databaseService.getItem("userId", "123");
-        });
+    describe("and the call is NOT successful", () => {
+      beforeEach(async () => {
+        mockDDBItem = jest.fn().mockRejectedValue({});
 
-        it("should return the correct item", () => {
-          expect(returnedItem).toEqual(undefined);
-        });
+        returnedItem = await databaseService.getItem(
+          "mock-string-key",
+          "mock-string"
+        );
+      });
 
-        it("should call the console log with correct message", () => {
-          expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
-        });
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual(undefined);
+      });
+
+      it("should call the console log with correct message", () => {
+        expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
+      });
+    });
+  });
+
+  describe("when getItem is invoked with a number", () => {
+    let returnedItem: any;
+
+    describe("and the call is successful", () => {
+      beforeEach(async () => {
+        returnedItem = await databaseService.getItem("mock-number-key", 123);
+      });
+
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual("mock-item");
+      });
+    });
+
+    describe("and the call is NOT successful", () => {
+      beforeEach(async () => {
+        mockDDBItem = jest.fn().mockRejectedValue({});
+
+        returnedItem = await databaseService.getItem("mock-number-key", 123);
+      });
+
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual(undefined);
+      });
+
+      it("should call the console log with correct message", () => {
+        expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
+      });
+    });
+  });
+
+  describe("when getItem is invoked with a boolean", () => {
+    let returnedItem: any;
+
+    describe("and the call is successful", () => {
+      beforeEach(async () => {
+        returnedItem = await databaseService.getItem("mock-boolean-key", true);
+      });
+
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual("mock-item");
+      });
+    });
+
+    describe("and the call is NOT successful", () => {
+      beforeEach(async () => {
+        mockDDBItem = jest.fn().mockRejectedValue({});
+
+        returnedItem = await databaseService.getItem("mock-boolean-key", true);
+      });
+
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual(undefined);
+      });
+
+      it("should call the console log with correct message", () => {
+        expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
       });
     });
   });
