@@ -13,9 +13,8 @@ jest.mock("aws-sdk", () => {
   };
 });
 
-describe("databaseService", () => {
+describe("DatabaseService", () => {
   let databaseService: DatabaseService;
-  const mockParams = { TableName: "mock-table", Key: { mockKey: { S: 123 } } };
   let consoleLog: any;
 
   beforeEach(() => {
@@ -34,7 +33,7 @@ describe("databaseService", () => {
   });
 
   describe("when instantiated", () => {
-    it("should set the reqion correctly", () => {
+    it("should update the configuration correctly", () => {
       expect(aws.config.update).toHaveBeenCalledWith({ region: "us-east-1" });
     });
 
@@ -49,7 +48,7 @@ describe("databaseService", () => {
 
       describe("and the call is successful", () => {
         beforeEach(async () => {
-          returnedItem = await databaseService.getItem(mockParams);
+          returnedItem = await databaseService.getItem("userId", "123");
         });
 
         it("should return the correct item", () => {
@@ -61,11 +60,15 @@ describe("databaseService", () => {
         beforeEach(async () => {
           mockDDBItem = jest.fn().mockRejectedValue({});
 
-          returnedItem = await databaseService.getItem(mockParams);
+          returnedItem = await databaseService.getItem("userId", "123");
         });
 
         it("should return the correct item", () => {
           expect(returnedItem).toEqual(undefined);
+        });
+
+        it("should call the console log with correct message", () => {
+          expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
         });
       });
     });

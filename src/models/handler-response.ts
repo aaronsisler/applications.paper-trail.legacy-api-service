@@ -1,6 +1,6 @@
 import { BaseResponse } from "./base-response";
 
-export interface SuccessResponse extends BaseResponse {
+export interface HandlerResponse extends BaseResponse {
   statusCode: number;
   body: string;
 }
