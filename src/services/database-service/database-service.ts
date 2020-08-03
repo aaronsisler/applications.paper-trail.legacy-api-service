@@ -9,18 +9,20 @@ interface Params {
 }
 
 class DatabaseService {
-  private ddb: DynamoDB;
+  private dynamoDB: DynamoDB;
   private tableName: string = "PAPER_TRAIL_SERVICE_POC";
 
-  constructor() {
+  constructor(dynamoDB?: DynamoDB) {
     aws.config.update({ region: "us-east-1" });
-    this.ddb = new aws.DynamoDB({ apiVersion: "2012-08-10" });
+    this.dynamoDB = dynamoDB
+      ? dynamoDB
+      : new aws.DynamoDB({ apiVersion: "2012-08-10" });
   }
 
   async getItem(key: string, value: DatabaseValue): Promise<DatabaseItem> {
     try {
       const params = this.getParams(key, value);
-      const { Item: item } = await this.ddb.getItem(params).promise();
+      const { Item: item } = await this.dynamoDB.getItem(params).promise();
 
       return item;
     } catch (error) {
