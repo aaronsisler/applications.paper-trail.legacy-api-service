@@ -1,9 +1,13 @@
 import { UserService } from "./index";
+import { rawUser } from "../../mocks/raw-user";
+import { user } from "../../mocks/user";
+
 let mockGetItem: jest.Mock;
+let mockDatabaseService: jest.Mock;
 
 jest.mock("../../services/database-service", () => {
   return {
-    DatabaseService: jest.fn(() => ({
+    DatabaseService: jest.fn().mockImplementation(() => ({
       getItem: mockGetItem
     }))
   };
@@ -12,6 +16,7 @@ jest.mock("../../services/database-service", () => {
 describe("UserService", () => {
   let userService: UserService;
   let consoleLog: any;
+  let returnedUser: any;
 
   beforeEach(() => {
     consoleLog = console.log;
@@ -29,15 +34,54 @@ describe("UserService", () => {
   });
 
   describe("when instantiated", () => {
-    describe("and database service is provided", () => {
-      it("should set the database service correctly", () => {
-        expect(true).toEqual(true);
+    it("should create a new database service instance", () => {
+      expect(userService["databaseService"]).toBeDefined();
+    });
+  });
+
+  describe("when getUser is invoked", () => {
+    describe("and is successful", () => {
+      beforeEach(async () => {
+        mockGetItem = jest.fn().mockResolvedValue(rawUser);
+        userService = new UserService();
+        returnedUser = await userService.getUser("mock-user-id");
+      });
+
+      it("should call the database service with correct parameters", () => {
+        expect(userService["databaseService"].getItem).toHaveBeenCalledWith(
+          "userId",
+          "mock-user-id"
+        );
+      });
+
+      it("should return the correct user", () => {
+        expect(returnedUser).toEqual(user);
       });
     });
 
-    describe("and database service is NOT provided", () => {
-      it("should set the database service correctly", () => {
-        expect(true).toEqual(true);
+    describe("and is NOT successful", () => {
+      const expectedError = "mock-error";
+
+      beforeEach(async () => {
+        mockGetItem = jest.fn().mockRejectedValue(expectedError);
+        userService = new UserService();
+        returnedUser = await userService.getUser("mock-user-id");
+      });
+
+      it("should call the database service with correct parameters", () => {
+        expect(userService["databaseService"].getItem).toHaveBeenCalledWith(
+          "userId",
+          "mock-user-id"
+        );
+      });
+
+      it("should return the correct user", () => {
+        expect(returnedUser).toEqual(undefined);
+      });
+
+      it("should log correct messages to the console", () => {
+        expect(console.log).toHaveBeenCalledWith("ERROR: UserService");
+        expect(console.log).toHaveBeenCalledWith(expectedError);
       });
     });
   });

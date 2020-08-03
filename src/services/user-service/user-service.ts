@@ -5,10 +5,8 @@ import { DatabaseItem } from "../../models/database-item";
 class UserService {
   private databaseService: DatabaseService;
 
-  constructor(databaseService?: DatabaseService) {
-    this.databaseService = databaseService
-      ? databaseService
-      : new DatabaseService();
+  constructor() {
+    this.databaseService = new DatabaseService();
   }
 
   async getUser(userId: string): Promise<User> {
