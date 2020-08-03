@@ -9,7 +9,9 @@ jest.mock("aws-sdk", () => {
     config: {
       update: jest.fn()
     },
-    DynamoDB: jest.fn()
+    DynamoDB: jest.fn().mockImplementation(() => ({
+      getItem: mockDDBGetItem
+    }))
   };
 });
 
@@ -21,10 +23,7 @@ describe("DatabaseService", () => {
   beforeEach(() => {
     mockDDBItem = jest.fn().mockResolvedValue({ Item: "mock-item" });
     mockDDBGetItem = jest.fn(() => ({ promise: mockDDBItem }));
-    dynamoDB = jest.fn().mockImplementation(() => ({
-      getItem: mockDDBGetItem
-    }));
-    databaseService = new DatabaseService(new dynamoDB());
+    databaseService = new DatabaseService();
     consoleLog = console.log;
     console.log = jest.fn();
   });
@@ -44,7 +43,6 @@ describe("DatabaseService", () => {
     });
 
     it("should set the api version correctly", () => {
-      databaseService = new DatabaseService();
       expect(aws.DynamoDB).toHaveBeenCalledWith({ apiVersion: "2012-08-10" });
     });
   });
@@ -78,7 +76,7 @@ describe("DatabaseService", () => {
 
     describe("and the call is NOT successful", () => {
       beforeEach(async () => {
-        mockDDBItem = jest.fn().mockRejectedValue({});
+        mockDDBItem = jest.fn().mockRejectedValue("mock-error");
 
         returnedItem = await databaseService.getItem(
           "mock-string-key",
@@ -92,6 +90,7 @@ describe("DatabaseService", () => {
 
       it("should call the console log with correct message", () => {
         expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
+        expect(console.log).toHaveBeenCalledWith("mock-error");
       });
     });
   });
@@ -122,7 +121,7 @@ describe("DatabaseService", () => {
 
     describe("and the call is NOT successful", () => {
       beforeEach(async () => {
-        mockDDBItem = jest.fn().mockRejectedValue({});
+        mockDDBItem = jest.fn().mockRejectedValue("mock-error");
 
         returnedItem = await databaseService.getItem("mock-number-key", 123);
       });
@@ -133,6 +132,7 @@ describe("DatabaseService", () => {
 
       it("should call the console log with correct message", () => {
         expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
+        expect(console.log).toHaveBeenCalledWith("mock-error");
       });
     });
   });
@@ -163,7 +163,7 @@ describe("DatabaseService", () => {
 
     describe("and the call is NOT successful", () => {
       beforeEach(async () => {
-        mockDDBItem = jest.fn().mockRejectedValue({});
+        mockDDBItem = jest.fn().mockRejectedValue("mock-error");
 
         returnedItem = await databaseService.getItem("mock-boolean-key", true);
       });
@@ -174,6 +174,7 @@ describe("DatabaseService", () => {
 
       it("should call the console log with correct message", () => {
         expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
+        expect(console.log).toHaveBeenCalledWith("mock-error");
       });
     });
   });

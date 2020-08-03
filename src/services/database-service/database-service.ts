@@ -12,11 +12,9 @@ class DatabaseService {
   private dynamoDB: DynamoDB;
   private tableName: string = "PAPER_TRAIL_SERVICE_POC";
 
-  constructor(dynamoDB?: DynamoDB) {
+  constructor() {
     aws.config.update({ region: "us-east-1" });
-    this.dynamoDB = dynamoDB
-      ? dynamoDB
-      : new aws.DynamoDB({ apiVersion: "2012-08-10" });
+    this.dynamoDB = new aws.DynamoDB({ apiVersion: "2012-08-10" });
   }
 
   async getItem(key: string, value: DatabaseValue): Promise<DatabaseItem> {
@@ -27,6 +25,7 @@ class DatabaseService {
       return item;
     } catch (error) {
       console.log("ERROR: DatabaseService"); // TODO figure out AWS logging
+      console.log(error);
     }
 
     return undefined;

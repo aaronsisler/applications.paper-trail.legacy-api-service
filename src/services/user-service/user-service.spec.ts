@@ -3,7 +3,6 @@ import { rawUser } from "../../mocks/raw-user";
 import { user } from "../../mocks/user";
 
 let mockGetItem: jest.Mock;
-let mockDatabaseService: jest.Mock;
 
 jest.mock("../../services/database-service", () => {
   return {
