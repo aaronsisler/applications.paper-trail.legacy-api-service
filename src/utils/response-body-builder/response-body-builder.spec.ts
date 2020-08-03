@@ -1,9 +1,9 @@
 import { responseBodyBuilder } from "./index";
 import { BaseResponse } from "../../models/base-response";
-import { SuccessResponse } from "../../models/success-response";
+import { HandlerResponse } from "../../models/handler-response";
 
 describe("utils - Response Body Builder", () => {
-  let successResponse: SuccessResponse;
+  let handlerResponse: HandlerResponse;
   const mockBody = { returned: "value" };
   const baseResponse: BaseResponse = {
     statusCode: 200,
@@ -11,17 +11,17 @@ describe("utils - Response Body Builder", () => {
   };
 
   beforeEach(() => {
-    successResponse = responseBodyBuilder(baseResponse);
+    handlerResponse = responseBodyBuilder(baseResponse);
   });
 
   it("should return the status code", () => {
-    const { statusCode } = successResponse;
+    const { statusCode } = handlerResponse;
 
     expect(statusCode).toEqual(200);
   });
 
   it("should return the correct response body", () => {
-    const { body } = successResponse;
+    const { body } = handlerResponse;
 
     expect(body).toEqual(JSON.stringify(mockBody));
   });
