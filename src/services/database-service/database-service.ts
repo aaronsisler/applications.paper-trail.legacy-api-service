@@ -2,6 +2,7 @@ import aws, { DynamoDB } from "aws-sdk";
 
 import { DatabaseValue } from "../../models/database-value";
 import { DatabaseItem } from "../../models/database-item";
+import { DATABASE_TABLE } from "../../config";
 
 interface Params {
   TableName: string;
@@ -10,7 +11,7 @@ interface Params {
 
 class DatabaseService {
   private dynamoDB: DynamoDB;
-  private tableName: string = "PAPER_TRAIL_SERVICE_POC";
+  private tableName: string = DATABASE_TABLE;
 
   constructor() {
     aws.config.update({ region: "us-east-1" });

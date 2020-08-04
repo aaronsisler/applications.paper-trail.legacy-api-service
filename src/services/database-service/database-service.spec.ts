@@ -15,6 +15,8 @@ jest.mock("aws-sdk", () => {
   };
 });
 
+jest.mock("../../config", () => ({ DATABASE_TABLE: "mock-ddb-table" }));
+
 describe("DatabaseService", () => {
   let dynamoDB: any;
   let databaseService: DatabaseService;
@@ -65,7 +67,7 @@ describe("DatabaseService", () => {
               S: "mock-string"
             }
           },
-          TableName: "PAPER_TRAIL_SERVICE_POC"
+          TableName: "mock-ddb-table"
         });
       });
 
@@ -110,7 +112,7 @@ describe("DatabaseService", () => {
               N: 123
             }
           },
-          TableName: "PAPER_TRAIL_SERVICE_POC"
+          TableName: "mock-ddb-table"
         });
       });
 
@@ -152,7 +154,7 @@ describe("DatabaseService", () => {
               B: true
             }
           },
-          TableName: "PAPER_TRAIL_SERVICE_POC"
+          TableName: "mock-ddb-table"
         });
       });
 
