@@ -10,17 +10,18 @@
     "pretest": "rm -rf ./coverage",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:health": "serverless invoke --function health --config=./deploy/serverless.beta.yml",
     "clear-serverless": "rm -rf ./.serverless",
     "create-domain:beta": "sls create_domain --config=./deploy/serverless.beta.yml",
     "create-domain:prod": "sls create_domain --config=./deploy/serverless.prod.yml",
     "deploy:beta": "npm run build && sls deploy --config=./deploy/serverless.beta.yml",
-    "deploy:prod": "npm run build && sls deploy --config=./deploy/serverless.prod.yml",
-    "test:health": "serverless invoke --function health --config=./deploy/serverless.beta.yml"
+    "deploy:prod": "npm run build && sls deploy --config=./deploy/serverless.prod.yml"
   },
   "engines": {
     "node": ">=12"
   },
   "dependencies": {
+    "aws-sdk": "^2.720.0",
     "serverless-domain-manager": "^4.2.0"
   },
   "devDependencies": {
