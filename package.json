@@ -7,7 +7,6 @@
     "build": "tsc",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/local-server.ts",
     "lint": "eslint \"./**/*.js\"",
-    "start": "node ./server",
     "pretest": "rm -rf ./coverage",
     "test": "jest",
     "test:watch": "jest --watch",
