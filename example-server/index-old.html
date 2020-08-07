@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta
+      name="google-signin-client_id"
+      content="809077609430-ckus1br8pvur9vc3lb727fdf775n3jap.apps.googleusercontent.com"
+    />
+    <title>Google Auth To AWS</title>
+  </head>
+  <body>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.487.0.min.js"></script>
+
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <a href="#" onclick="signOut();">Sign out</a>
+
+    <p id="log"></p>
+
+    <script>
+      var awsBucketName =
+        "test-google-oauth.s3-website-us-east-1.amazonaws.com";
+      var awsRoleARN = "arn:aws:iam::654918520080:role/GOOGLE-OAUTH";
+
+      function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        logMessage("Logged in.");
+        logMessage("Name: " + profile.getName());
+        logMessage("Email: " + profile.getEmail());
+
+        var id_token = googleUser.getAuthResponse().id_token;
+
+        assumeRoleWithAWS(id_token);
+      }
+
+      function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+          logMessage("User signed out.");
+          logMessage("");
+        });
+      }
+
+      function assumeRoleWithAWS(webIdentityToken) {
+        var params = {
+          DurationSeconds: 3600,
+          RoleArn: awsRoleARN,
+          RoleSessionName: "GoogleOAuth2Session",
+          WebIdentityToken: webIdentityToken
+        };
+
+        var sts = new AWS.STS();
+        sts.assumeRoleWithWebIdentity(params, function (err, data) {
+          if (err) console.log(err, err.stack);
+          else {
+            logMessage("Successfully assumed role with AWS");
+
+            var creds = new AWS.Credentials({
+              accessKeyId: data.Credentials.AccessKeyId,
+              secretAccessKey: data.Credentials.SecretAccessKey,
+              sessionToken: data.Credentials.SessionToken
+            });
+
+            AWS.config.credentials = creds;
+            getAWSS3BucketObjects();
+          }
+        });
+      }
+
+      function getAWSS3BucketObjects() {
+        var s3 = new AWS.S3();
+
+        var params = {
+          Bucket: awsBucketName
+        };
+        console.log("Bucket name:", awsBucketName);
+
+        s3.listObjects(params, function (err, data) {
+          if (err) console.log(err, err.stack);
+          else {
+            logMessage("");
+            logMessage("====== S3 Bucket Objects ======");
+            data.Contents.forEach((element) => {
+              logMessage(element.Key);
+            });
+            logMessage("");
+          }
+        });
+      }
+
+      function logMessage(message) {
+        $("#log").append(message + "</br>");
+      }
+    </script>
+  </body>
+</html>

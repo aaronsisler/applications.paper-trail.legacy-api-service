@@ -6,6 +6,7 @@
     "prebuild": "rm -rf ./dist",
     "build": "tsc",
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/local-server.ts",
+    "dev:auth": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/auth-server.ts",
     "lint": "eslint \"./**/*.js\"",
     "pretest": "rm -rf ./coverage",
     "test": "jest",
