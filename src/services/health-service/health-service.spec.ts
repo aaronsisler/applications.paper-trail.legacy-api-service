@@ -1,7 +1,7 @@
 import { healthService } from "./index";
 import { Health } from "../../models/health";
 
-describe("healthService", () => {
+describe("services/healthService", () => {
   let health: Health;
 
   beforeEach(() => {

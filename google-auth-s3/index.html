@@ -17,6 +17,7 @@
       function onSignIn(googleUser) {
         // Useful data for your client-side scripts:
         var profile = googleUser.getBasicProfile();
+        clearLogMessages();
         logMessage("ID: " + profile.getId()); // Don't send this directly to your server!
         logMessage("Full Name: " + profile.getName());
         logMessage("Given Name: " + profile.getGivenName());
@@ -31,16 +32,19 @@
 
       function signOut() {
         var auth2 = gapi.auth2.getAuthInstance();
+        clearLogMessages();
         auth2.signOut().then(function () {
           logMessage("User signed out.");
-          logMessage("");
         });
-        document.getElementById("log").innerHTML = "";
       }
 
       function logMessage(message) {
         document.getElementById("log").append(message);
         document.getElementById("log").append(document.createElement("br"));
+      }
+
+      function clearLogMessages() {
+        document.getElementById("log").innerHTML = "";
       }
     </script>
   </body>

@@ -12,7 +12,7 @@ jest.mock("../../services/database-service", () => {
   };
 });
 
-describe("UserService", () => {
+describe("services/UserService", () => {
   let userService: UserService;
   let consoleLog: any;
   let returnedUser: any;
