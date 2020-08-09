@@ -52,7 +52,7 @@ describe("handlers/user-get", () => {
     });
 
     it("should invoke the callback with the correct response", () => {
-      expect(callback).toHaveBeenCalledWith("mock-body-built-response");
+      expect(callback).toHaveBeenCalledWith(null, "mock-body-built-response");
     });
   });
 
@@ -119,7 +119,7 @@ describe("handlers/user-get", () => {
     });
 
     it("should invoke callback with correct arguments", () => {
-      expect(callback).toHaveBeenCalledWith("mock-body-built-response");
+      expect(callback).toHaveBeenCalledWith(null, "mock-body-built-response");
     });
   });
 });

@@ -13,7 +13,8 @@ const userGet = async (event: any, _context: any, callback: any) => {
         statusCode: 401,
         body: "Error: Unauthenticated user"
       });
-      return callback(response);
+
+      return callback(null, response);
     }
 
     const userService = new UserService();
@@ -30,7 +31,7 @@ const userGet = async (event: any, _context: any, callback: any) => {
       statusCode: 500,
       body: "Error: Something went wrong"
     });
-    return callback(response);
+    return callback(null, response);
   }
 };
 
