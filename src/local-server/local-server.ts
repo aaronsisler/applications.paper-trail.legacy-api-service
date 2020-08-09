@@ -1,7 +1,7 @@
 import express from "express";
-import { healthService } from "./services/health-service";
-import { UserService } from "./services/user-service";
-import { User } from "./models/user";
+import { healthService } from "../services/health-service";
+import { UserService } from "../services/user-service";
+import { User } from "../models/user";
 
 const app = express();
 const port = process.env.PORT || "9001";

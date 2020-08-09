@@ -2,7 +2,7 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: [
     "<rootDir>/src/**/*.ts",
-    "!<rootDir>/src/local-server.ts"
+    "!<rootDir>/src/local-server/*.ts"
   ],
   // A list of reporter names that Jest uses when writing coverage reports
   coverageReporters: ["lcov", "text", "html"],

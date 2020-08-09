@@ -32,6 +32,7 @@ functions:
       - http:
           path: /user/{userId}
           method: get
+          authorizer: aws_iam
           request:
             parameters:
               paths:
