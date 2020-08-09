@@ -27,16 +27,12 @@ functions:
           method: get
   user:
     handler: dist/handlers/user-get-handler/index.handler
-    description: Retrieve user with userId paramater. Responds with user information.
+    description: Retrieve user with OAuth token. Responds with user information.
     events:
       - http:
-          path: /user/{userId}
+          path: /user
           method: get
           authorizer: aws_iam
-          request:
-            parameters:
-              paths:
-                userId: true
 
 plugins:
   - serverless-domain-manager
