@@ -11,7 +11,7 @@ const userGet = async (event: any, _context: any, callback: any) => {
     if (!authId) {
       const response: HandlerResponse = responseBodyBuilder({
         statusCode: 401,
-        body: "Error: Unauthenticated user"
+        body: ""
       });
 
       return callback(null, response);

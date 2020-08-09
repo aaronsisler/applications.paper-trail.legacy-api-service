@@ -35,7 +35,7 @@ describe("handlers/user-get", () => {
   describe("when authentication is NOT successful", () => {
     const expectedResponse = {
       statusCode: 401,
-      body: "Error: Unauthenticated user"
+      body: ""
     };
 
     beforeEach(async () => {
