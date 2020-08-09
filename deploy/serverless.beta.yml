@@ -38,15 +38,6 @@ functions:
               paths:
                 userId: true
 
-  auth:
-    handler: dist/handlers/auth-get-handler/index.handler
-    description: Testing auth process for getting our token's sub attribute
-    events:
-      - http:
-          path: /auth
-          method: get
-          authorizer: aws_iam
-
 plugins:
   - serverless-domain-manager
 
