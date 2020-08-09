@@ -27,7 +27,7 @@ functions:
           method: get
   user:
     handler: dist/handlers/user-get-handler/index.handler
-    description: Retrive user with userId paramater. Responds with user information.
+    description: Retrieve user with userId paramater. Responds with user information.
     events:
       - http:
           path: /user/{userId}
@@ -37,6 +37,15 @@ functions:
             parameters:
               paths:
                 userId: true
+
+  auth:
+    handler: dist/handlers/auth-get-handler/index.handler
+    description: Testing auth process for getting our token's sub attribute
+    events:
+      - http:
+          path: /auth
+          method: get
+          authorizer: aws_iam
 
 plugins:
   - serverless-domain-manager
