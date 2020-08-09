@@ -8,7 +8,7 @@ jest.mock("../../config", () => ({
 
 jest.mock("axios", () => ({ get: jest.fn() }));
 
-describe("AuthService", () => {
+describe("services/AuthService", () => {
   let authService: AuthService;
   let consoleLog: any;
   let returnedAuthId: string;

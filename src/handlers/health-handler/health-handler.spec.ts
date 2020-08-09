@@ -12,7 +12,7 @@ jest.mock("../../utils/response-body-builder", () => {
   return { responseBodyBuilder: jest.fn(() => "body-built-response") };
 });
 
-describe("health handler", () => {
+describe("handlers/health", () => {
   it("should be a function", () => {
     expect(typeof handler).toEqual("function");
   });

@@ -12,7 +12,7 @@ class AuthService {
     return returnedObject;
   }
 
-  async extractTokenValues(token: string) {
+  private async extractTokenValues(token: string) {
     let result: string;
 
     try {
