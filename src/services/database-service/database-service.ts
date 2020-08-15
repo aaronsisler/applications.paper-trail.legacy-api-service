@@ -32,10 +32,13 @@ class DatabaseService {
     return undefined;
   }
 
-  async getTransaction(params: any): Promise<DatabaseItem> {
+  async getTransactions(params: any): Promise<DatabaseItem> {
     try {
-      const { Item: item } = await this.dynamoDB.getItem(params).promise();
-
+      const callParams = Object.assign(
+        {},
+        { ...params, TableName: this.tableName }
+      );
+      const { Item: item } = await this.dynamoDB.getItem(callParams).promise();
       return item;
     } catch (error) {
       console.log("ERROR: DatabaseService"); // TODO figure out AWS logging

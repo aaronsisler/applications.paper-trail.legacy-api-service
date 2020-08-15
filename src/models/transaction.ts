@@ -9,7 +9,7 @@ export class Transaction {
   merchantAltName: string; // name string
   isPending: boolean; // pending boolean
 
-  constructor(options: {
+  constructor(options?: {
     transId: string;
     sourceTransId: string;
     amount: number;
@@ -20,14 +20,16 @@ export class Transaction {
     merchantAltName: string;
     isPending: boolean;
   }) {
-    this.transId = options.transId;
-    this.sourceTransId = options.sourceTransId;
-    this.amount = options.amount;
-    this.financialAccountId = options.financialAccountId;
-    this.transCategoryIds = options.transCategoryIds;
-    this.transDate = options.transDate;
-    this.merchantName = options.merchantName;
-    this.merchantAltName = options.merchantAltName;
-    this.isPending = options.isPending;
+    if (options) {
+      this.transId = options.transId;
+      this.sourceTransId = options.sourceTransId;
+      this.amount = options.amount;
+      this.financialAccountId = options.financialAccountId;
+      this.transCategoryIds = options.transCategoryIds;
+      this.transDate = options.transDate;
+      this.merchantName = options.merchantName;
+      this.merchantAltName = options.merchantAltName;
+      this.isPending = options.isPending;
+    }
   }
 }
