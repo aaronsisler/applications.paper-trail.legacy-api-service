@@ -4,6 +4,6 @@ export class TransactionCategory {
 
   constructor(transactionCategoryId: string, transactionCategoryName: string) {
     this.transactionCategoryId = transactionCategoryId;
-    this.transactionCategoryId = transactionCategoryName;
+    this.transactionCategoryName = transactionCategoryName;
   }
 }

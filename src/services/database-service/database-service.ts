@@ -32,6 +32,19 @@ class DatabaseService {
     return undefined;
   }
 
+  async getTransaction(params: any): Promise<DatabaseItem> {
+    try {
+      const { Item: item } = await this.dynamoDB.getItem(params).promise();
+
+      return item;
+    } catch (error) {
+      console.log("ERROR: DatabaseService"); // TODO figure out AWS logging
+      console.log(error);
+    }
+
+    return undefined;
+  }
+
   private getParams(key: string, value: DatabaseValue): Params {
     const valueType = this.getValueType(value);
     const paramKey = { [key]: { [valueType]: value } };

@@ -18,7 +18,7 @@ TBD
 ### DynamoDB Model
 
 - userId
-  - financialAccounts
   - transactions
-  - transactionCategories
-  - userDetails
+  - user
+    - financialAccounts
+    - transactionCategories
