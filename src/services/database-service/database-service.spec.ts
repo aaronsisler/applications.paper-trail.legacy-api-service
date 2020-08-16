@@ -1,5 +1,6 @@
 import { DatabaseService } from "./index";
 import aws from "aws-sdk";
+import { DatabaseTypes } from "../../constants";
 
 let mockDDBItem: jest.Mock;
 let mockDDBGetItem: jest.Mock;
@@ -18,7 +19,6 @@ jest.mock("aws-sdk", () => {
 jest.mock("../../config", () => ({ DATABASE_TABLE: "mock-ddb-table" }));
 
 describe("DatabaseService", () => {
-  let dynamoDB: any;
   let databaseService: DatabaseService;
   let consoleLog: any;
 
@@ -64,7 +64,7 @@ describe("DatabaseService", () => {
         expect(mockDDBGetItem).toHaveBeenCalledWith({
           Key: {
             "mock-string-key": {
-              S: "mock-string"
+              [DatabaseTypes.STRING]: "mock-string"
             }
           },
           TableName: "mock-ddb-table"
@@ -109,7 +109,7 @@ describe("DatabaseService", () => {
         expect(mockDDBGetItem).toHaveBeenCalledWith({
           Key: {
             "mock-number-key": {
-              N: 123
+              [DatabaseTypes.NUMBER]: 123
             }
           },
           TableName: "mock-ddb-table"
@@ -151,7 +151,7 @@ describe("DatabaseService", () => {
         expect(mockDDBGetItem).toHaveBeenCalledWith({
           Key: {
             "mock-boolean-key": {
-              B: true
+              [DatabaseTypes.BOOLEAN]: true
             }
           },
           TableName: "mock-ddb-table"

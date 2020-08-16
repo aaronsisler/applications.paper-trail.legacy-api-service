@@ -3,6 +3,7 @@ import aws, { DynamoDB } from "aws-sdk";
 import { DatabaseValue } from "../../models/database-value";
 import { DatabaseItem } from "../../models/database-item";
 import { DATABASE_TABLE } from "../../config";
+import { DatabaseTypes } from "../../constants";
 
 interface Params {
   TableName: string;
@@ -57,12 +58,12 @@ class DatabaseService {
   private getValueType(value: DatabaseValue): string {
     switch (typeof value) {
       case "number":
-        return "N";
+        return DatabaseTypes.NUMBER;
       case "boolean":
-        return "B";
+        return DatabaseTypes.BOOLEAN;
       case "string":
       default:
-        return "S";
+        return DatabaseTypes.STRING;
     }
   }
 }
