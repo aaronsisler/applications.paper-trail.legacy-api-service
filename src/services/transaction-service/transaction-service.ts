@@ -12,14 +12,12 @@ class TransactionService {
 
   async getTransactions(userId: string): Promise<Transaction[]> {
     let transactions: Transaction[] = [];
-    const params = {
-      Key: { userId: { S: userId } },
-      ProjectionExpression: `transactions`
-    };
     try {
       const {
         transactions: rawTransactions
-      } = await this.databaseService.getTransactions(params);
+      } = await this.databaseService.getItem("userId", userId, {
+        ProjectionExpression: `transactions`
+      });
       transactions = this.mapRawTransactions(
         rawTransactions[DatabaseTypes.OBJECT]
       );

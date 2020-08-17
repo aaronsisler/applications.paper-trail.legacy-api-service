@@ -19,9 +19,13 @@ class DatabaseService {
     this.dynamoDB = new aws.DynamoDB({ apiVersion: "2012-08-10" });
   }
 
-  async getItem(key: string, value: DatabaseValue): Promise<DatabaseItem> {
+  async getItem(
+    key: string,
+    value: DatabaseValue,
+    options?: any
+  ): Promise<DatabaseItem> {
     try {
-      const params = this.getParams(key, value);
+      const params = this.getParams(key, value, options);
       const { Item: item } = await this.dynamoDB.getItem(params).promise();
 
       return item;
@@ -33,26 +37,15 @@ class DatabaseService {
     return undefined;
   }
 
-  async getTransactions(params: any): Promise<DatabaseItem> {
-    try {
-      const callParams = Object.assign(
-        {},
-        { ...params, TableName: this.tableName }
-      );
-      const { Item: item } = await this.dynamoDB.getItem(callParams).promise();
-      return item;
-    } catch (error) {
-      console.log("ERROR: DatabaseService"); // TODO figure out AWS logging
-      console.log(error);
-    }
-
-    return undefined;
-  }
-
-  private getParams(key: string, value: DatabaseValue): Params {
+  private getParams(key: string, value: DatabaseValue, options?: any): Params {
     const valueType = this.getValueType(value);
     const paramKey = { [key]: { [valueType]: value } };
-    return { TableName: this.tableName, Key: paramKey };
+    return Object.assign(
+      {},
+      { TableName: this.tableName },
+      { Key: paramKey },
+      options
+    );
   }
 
   private getValueType(value: DatabaseValue): string {
