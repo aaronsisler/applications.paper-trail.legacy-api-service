@@ -3,6 +3,7 @@ import aws, { DynamoDB } from "aws-sdk";
 import { DatabaseValue } from "../../models/database-value";
 import { DatabaseItem } from "../../models/database-item";
 import { DATABASE_TABLE } from "../../config";
+import { DatabaseTypes } from "../../constants";
 
 interface Params {
   TableName: string;
@@ -18,9 +19,13 @@ class DatabaseService {
     this.dynamoDB = new aws.DynamoDB({ apiVersion: "2012-08-10" });
   }
 
-  async getItem(key: string, value: DatabaseValue): Promise<DatabaseItem> {
+  async getItem(
+    key: string,
+    value: DatabaseValue,
+    options?: string
+  ): Promise<DatabaseItem> {
     try {
-      const params = this.getParams(key, value);
+      const params = this.getParams(key, value, options);
       const { Item: item } = await this.dynamoDB.getItem(params).promise();
 
       return item;
@@ -32,21 +37,32 @@ class DatabaseService {
     return undefined;
   }
 
-  private getParams(key: string, value: DatabaseValue): Params {
+  private getParams(
+    key: string,
+    value: DatabaseValue,
+    options?: string
+  ): Params {
     const valueType = this.getValueType(value);
     const paramKey = { [key]: { [valueType]: value } };
-    return { TableName: this.tableName, Key: paramKey };
+    const returnedParams = Object.assign(
+      {},
+      { TableName: this.tableName },
+      { Key: paramKey },
+      { ProjectionExpression: options }
+    );
+    console.log(returnedParams);
+    return returnedParams;
   }
 
   private getValueType(value: DatabaseValue): string {
     switch (typeof value) {
       case "number":
-        return "N";
+        return DatabaseTypes.NUMBER;
       case "boolean":
-        return "B";
+        return DatabaseTypes.BOOLEAN;
       case "string":
       default:
-        return "S";
+        return DatabaseTypes.STRING;
     }
   }
 }
