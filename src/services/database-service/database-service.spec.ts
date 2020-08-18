@@ -97,6 +97,106 @@ describe("DatabaseService", () => {
     });
   });
 
+  describe("when getItem is invoked with options", () => {
+    let returnedItem: any;
+
+    describe("and the call is successful", () => {
+      beforeEach(async () => {
+        returnedItem = await databaseService.getItem(
+          "mock-string-key",
+          "mock-string",
+          "transactions"
+        );
+      });
+
+      it("should have called the database with correct params", async () => {
+        expect(mockDDBGetItem).toHaveBeenCalledWith({
+          Key: {
+            "mock-string-key": {
+              [DatabaseTypes.STRING]: "mock-string"
+            }
+          },
+          TableName: "mock-ddb-table",
+          ProjectionExpression: "transactions"
+        });
+      });
+
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual("mock-item");
+      });
+    });
+
+    describe("and the call is NOT successful", () => {
+      beforeEach(async () => {
+        mockDDBItem = jest.fn().mockRejectedValue("mock-error");
+
+        returnedItem = await databaseService.getItem(
+          "mock-string-key",
+          "mock-string",
+          "transactions"
+        );
+      });
+
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual(undefined);
+      });
+
+      it("should call the console log with correct message", () => {
+        expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
+        expect(console.log).toHaveBeenCalledWith("mock-error");
+      });
+    });
+  });
+
+  describe("when getItem is invoked with NO options", () => {
+    let returnedItem: any;
+
+    describe("and the call is successful", () => {
+      beforeEach(async () => {
+        returnedItem = await databaseService.getItem(
+          "mock-string-key",
+          "mock-string"
+        );
+      });
+
+      it("should have called the database with correct params", async () => {
+        expect(mockDDBGetItem).toHaveBeenCalledWith({
+          Key: {
+            "mock-string-key": {
+              [DatabaseTypes.STRING]: "mock-string"
+            }
+          },
+          TableName: "mock-ddb-table",
+          ProjectionExpression: undefined
+        });
+      });
+
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual("mock-item");
+      });
+    });
+
+    describe("and the call is NOT successful", () => {
+      beforeEach(async () => {
+        mockDDBItem = jest.fn().mockRejectedValue("mock-error");
+
+        returnedItem = await databaseService.getItem(
+          "mock-string-key",
+          "mock-string"
+        );
+      });
+
+      it("should return the correct item", () => {
+        expect(returnedItem).toEqual(undefined);
+      });
+
+      it("should call the console log with correct message", () => {
+        expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
+        expect(console.log).toHaveBeenCalledWith("mock-error");
+      });
+    });
+  });
+
   describe("when getItem is invoked with a number", () => {
     let returnedItem: any;
 

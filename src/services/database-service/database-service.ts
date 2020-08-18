@@ -44,12 +44,14 @@ class DatabaseService {
   ): Params {
     const valueType = this.getValueType(value);
     const paramKey = { [key]: { [valueType]: value } };
-    return Object.assign(
+    const returnedParams = Object.assign(
       {},
       { TableName: this.tableName },
       { Key: paramKey },
       { ProjectionExpression: options }
     );
+    console.log(returnedParams);
+    return returnedParams;
   }
 
   private getValueType(value: DatabaseValue): string {
