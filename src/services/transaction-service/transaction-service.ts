@@ -15,9 +15,7 @@ class TransactionService {
     try {
       const {
         transactions: rawTransactions
-      } = await this.databaseService.getItem("userId", userId, {
-        ProjectionExpression: `transactions`
-      });
+      } = await this.databaseService.getItem("userId", userId, `transactions`);
       transactions = this.mapRawTransactions(
         rawTransactions[DatabaseTypes.OBJECT]
       );

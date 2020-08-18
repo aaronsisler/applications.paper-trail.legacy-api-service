@@ -22,7 +22,7 @@ class DatabaseService {
   async getItem(
     key: string,
     value: DatabaseValue,
-    options?: any
+    options?: string
   ): Promise<DatabaseItem> {
     try {
       const params = this.getParams(key, value, options);
@@ -37,14 +37,18 @@ class DatabaseService {
     return undefined;
   }
 
-  private getParams(key: string, value: DatabaseValue, options?: any): Params {
+  private getParams(
+    key: string,
+    value: DatabaseValue,
+    options?: string
+  ): Params {
     const valueType = this.getValueType(value);
     const paramKey = { [key]: { [valueType]: value } };
     return Object.assign(
       {},
       { TableName: this.tableName },
       { Key: paramKey },
-      options
+      { ProjectionExpression: options }
     );
   }
 
