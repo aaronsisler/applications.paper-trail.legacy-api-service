@@ -30,7 +30,7 @@ class DatabaseService {
 
       return item;
     } catch (error) {
-      console.log("ERROR: DatabaseService"); // TODO figure out AWS logging
+      console.log("ERROR: DatabaseService");
       console.log(error);
     }
 

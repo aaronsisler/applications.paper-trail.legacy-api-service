@@ -14,7 +14,7 @@ class AuthService {
     } catch (error) {}
 
     if (!token) {
-      console.log("ERROR: AuthService"); // TODO figure out AWS logging
+      console.log("ERROR: AuthService");
       console.log("No token found in headers");
       return authId;
     }
@@ -22,7 +22,7 @@ class AuthService {
     try {
       authId = await this.extractTokenValues(token);
     } catch (error) {
-      console.log("ERROR: AuthService"); // TODO figure out AWS logging
+      console.log("ERROR: AuthService");
       console.log("OAuth token not valid");
     }
 

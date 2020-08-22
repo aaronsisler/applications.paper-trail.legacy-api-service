@@ -19,7 +19,7 @@ class UserService {
       user = this.mapRawUser(rawUser);
       return user;
     } catch (error) {
-      console.log("ERROR: UserService"); // TODO figure out AWS logging
+      console.log("ERROR: UserService");
       console.log(error);
     }
 
