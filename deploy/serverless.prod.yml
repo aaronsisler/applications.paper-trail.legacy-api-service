@@ -2,7 +2,7 @@ service: paper-trail-service
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: prod
   region: us-east-1
   role: arn:aws:iam::654918520080:role/APIG-LAMBDA-DDB
