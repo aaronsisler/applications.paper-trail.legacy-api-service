@@ -1,6 +1,7 @@
 import { User } from "../../models/user";
 import { DatabaseService } from "../database-service";
 import { DatabaseItem } from "../../models/database-item";
+import { DatabaseTypes } from "../../constants";
 
 class UserService {
   private databaseService: DatabaseService;
@@ -12,11 +13,14 @@ class UserService {
   async getUser(userId: string): Promise<User> {
     let user: User;
     try {
-      const rawUser: DatabaseItem = await this.databaseService.getItem(
+      const {
+        userDetails: rawUser
+      }: DatabaseItem = await this.databaseService.getItem(
         "userId",
-        userId
+        userId,
+        "userDetails"
       );
-      user = this.mapRawUser(rawUser);
+      user = this.mapRawUser(rawUser[DatabaseTypes.OBJECT], userId);
       return user;
     } catch (error) {
       console.log("ERROR: UserService");
@@ -26,11 +30,11 @@ class UserService {
     return user;
   }
 
-  private mapRawUser(rawUser: DatabaseItem): User {
+  private mapRawUser(rawUser: DatabaseItem, userId: string): User {
     const user: User = new User({
       firstName: rawUser.firstName["S"],
       lastName: rawUser.lastName["S"],
-      userId: rawUser.userId["S"]
+      userId
     });
 
     return user;

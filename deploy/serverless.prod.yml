@@ -2,7 +2,7 @@ service: paper-trail-service
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs12.x
   stage: prod
   region: us-east-1
   role: arn:aws:iam::654918520080:role/APIG-LAMBDA-DDB
@@ -31,6 +31,14 @@ functions:
     events:
       - http:
           path: /user
+          method: get
+          authorizer: aws_iam
+  transactions:
+    handler: dist/handlers/transactions-get-handler/index.handler
+    description: Retrieve user with OAuth token. Responds with user's transaction information.
+    events:
+      - http:
+          path: /transactions
           method: get
           authorizer: aws_iam
 

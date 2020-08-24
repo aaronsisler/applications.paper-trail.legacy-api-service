@@ -1,5 +1,5 @@
 import { UserService } from "./index";
-import { rawUser } from "../../mocks/raw-user";
+import { rawUserDetails } from "../../mocks/raw-user-details";
 import { user } from "../../mocks/user";
 
 let mockGetItem: jest.Mock;
@@ -38,10 +38,10 @@ describe("services/UserService", () => {
     });
   });
 
-  describe("when getUser is invoked", () => {
+  describe("when a GET user is invoked", () => {
     describe("and is successful", () => {
       beforeEach(async () => {
-        mockGetItem = jest.fn().mockResolvedValue(rawUser);
+        mockGetItem = jest.fn().mockResolvedValue(rawUserDetails);
         userService = new UserService();
         returnedUser = await userService.getUser("mock-user-id");
       });
@@ -49,7 +49,8 @@ describe("services/UserService", () => {
       it("should call the database service with correct parameters", () => {
         expect(userService["databaseService"].getItem).toHaveBeenCalledWith(
           "userId",
-          "mock-user-id"
+          "mock-user-id",
+          "userDetails"
         );
       });
 
@@ -70,7 +71,8 @@ describe("services/UserService", () => {
       it("should call the database service with correct parameters", () => {
         expect(userService["databaseService"].getItem).toHaveBeenCalledWith(
           "userId",
-          "mock-user-id"
+          "mock-user-id",
+          "userDetails"
         );
       });
 

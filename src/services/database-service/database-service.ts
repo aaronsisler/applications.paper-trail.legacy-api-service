@@ -50,7 +50,6 @@ class DatabaseService {
       { Key: paramKey },
       { ProjectionExpression: options }
     );
-    console.log(returnedParams);
     return returnedParams;
   }
 

@@ -2,7 +2,7 @@ import { handler } from "./index";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 
 let mockGetAuthId: jest.Mock;
-let mockGetUser: jest.Mock;
+let mockGetTransactions: jest.Mock;
 
 jest.mock("../../services/auth-service", () => {
   return {
@@ -12,10 +12,10 @@ jest.mock("../../services/auth-service", () => {
   };
 });
 
-jest.mock("../../services/user-service", () => {
+jest.mock("../../services/transaction-service", () => {
   return {
-    UserService: jest.fn(() => ({
-      getUser: mockGetUser
+    TransactionService: jest.fn(() => ({
+      getTransactions: mockGetTransactions
     }))
   };
 });
@@ -24,7 +24,7 @@ jest.mock("../../utils/response-body-builder", () => {
   return { responseBodyBuilder: jest.fn(() => "mock-body-built-response") };
 });
 
-describe("handlers/user-get", () => {
+describe("handlers/transactions-get", () => {
   let callback: Function;
   let event: object;
 
@@ -59,25 +59,25 @@ describe("handlers/user-get", () => {
   describe("when authentication is successful", () => {
     beforeEach(() => {
       mockGetAuthId = jest.fn().mockResolvedValue("mock-auth-id");
-      mockGetUser = jest.fn();
+      mockGetTransactions = jest.fn();
     });
 
-    it("should call user service with correct arguments", async () => {
+    it("should call transaction service with correct arguments", async () => {
       await handler(event, undefined, callback);
 
-      expect(mockGetUser).toHaveBeenCalledWith("mock-auth-id");
+      expect(mockGetTransactions).toHaveBeenCalledWith("mock-auth-id");
     });
 
-    describe("when fetched user is found", () => {
+    describe("when fetched transactions are found", () => {
       beforeEach(async () => {
-        mockGetUser = jest.fn().mockResolvedValue("mock-user");
+        mockGetTransactions = jest.fn().mockResolvedValue("mock-transactions");
         await handler(event, undefined, callback);
       });
 
       it("should call the response body builder with the correct parameters", () => {
         expect(responseBodyBuilder).toHaveBeenCalledWith({
           statusCode: 200,
-          body: "mock-user"
+          body: "mock-transactions"
         });
       });
 
@@ -86,16 +86,16 @@ describe("handlers/user-get", () => {
       });
     });
 
-    describe("when fetched user is NOT found", () => {
+    describe("when fetched transactions are NOT found", () => {
       beforeEach(async () => {
-        mockGetUser = jest.fn().mockResolvedValue(undefined);
+        mockGetTransactions = jest.fn().mockResolvedValue([]);
         await handler(event, undefined, callback);
       });
 
       it("should call the response body builder with the correct parameters", () => {
         expect(responseBodyBuilder).toHaveBeenCalledWith({
-          statusCode: 204,
-          body: undefined
+          statusCode: 200,
+          body: []
         });
       });
 
