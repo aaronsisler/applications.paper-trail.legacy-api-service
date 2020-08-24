@@ -6,12 +6,23 @@ class AuthService {
   constructor() {}
 
   async getAuthId(req: any): Promise<string> {
+    let authHeader: string;
     let token: string;
     let authId: string;
 
     try {
-      token = req.headers[TOKEN_HEADER];
-    } catch (error) {}
+      authHeader = req.headers[TOKEN_HEADER];
+    } catch (error) {
+      console.log("ERROR: AuthService");
+      console.log("No token found in headers");
+    }
+
+    try {
+      [, token] = authHeader.split(" ");
+    } catch (error) {
+      console.log("ERROR: AuthService");
+      console.log("Token not correct format in header");
+    }
 
     if (!token) {
       console.log("ERROR: AuthService");
@@ -20,7 +31,7 @@ class AuthService {
     }
 
     try {
-      authId = await this.extractTokenValues(token);
+      authId = await this.extractTokenValue(token);
     } catch (error) {
       console.log("ERROR: AuthService");
       console.log("OAuth token not valid");
@@ -29,7 +40,7 @@ class AuthService {
     return authId;
   }
 
-  private async extractTokenValues(token: string) {
+  private async extractTokenValue(token: string) {
     let result: string;
 
     const { data } = await axios.get(TOKEN_VALIDATION_URL, {
