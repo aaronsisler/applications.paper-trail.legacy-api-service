@@ -12,7 +12,7 @@ describe("services/AuthService", () => {
   let authService: AuthService;
   let consoleLog: any;
   let returnedAuthId: string;
-  const mockRequest = { headers: { "mock-token-header": "mock-token" } };
+  const mockRequest = { headers: { "mock-token-header": "Bearer mock-token" } };
 
   beforeEach(() => {
     consoleLog = console.log;
@@ -30,7 +30,7 @@ describe("services/AuthService", () => {
   });
 
   describe("when getAuthId is invoked", () => {
-    describe("and headers do not contain correct token header", () => {
+    describe("and headers do NOT contain correct token header", () => {
       beforeEach(async () => {
         authService = new AuthService();
         returnedAuthId = await authService.getAuthId({});

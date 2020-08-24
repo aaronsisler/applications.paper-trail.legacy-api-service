@@ -15,13 +15,16 @@ class AuthService {
     } catch (error) {
       console.log("ERROR: AuthService");
       console.log("No token found in headers");
+      return authId;
     }
 
     try {
       [, token] = authHeader.split(" ");
     } catch (error) {
+      console.log("Here");
       console.log("ERROR: AuthService");
       console.log("Token not correct format in header");
+      return authId;
     }
 
     if (!token) {
