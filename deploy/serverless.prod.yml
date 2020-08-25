@@ -32,7 +32,6 @@ functions:
       - http:
           path: /user
           method: get
-          authorizer: aws_iam
   transactions:
     handler: dist/handlers/transactions-get-handler/index.handler
     description: Retrieve user with OAuth token. Responds with user's transaction information.
@@ -40,7 +39,6 @@ functions:
       - http:
           path: /transactions
           method: get
-          authorizer: aws_iam
 
 plugins:
   - serverless-domain-manager
