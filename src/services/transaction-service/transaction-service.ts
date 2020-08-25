@@ -20,7 +20,7 @@ class TransactionService {
         rawTransactions[DatabaseTypes.OBJECT]
       );
     } catch (error) {
-      console.log("ERROR: TransactionService"); // TODO figure out AWS logging
+      console.log("ERROR: TransactionService");
       console.log(error);
     }
 

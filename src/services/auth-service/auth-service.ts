@@ -6,30 +6,36 @@ class AuthService {
   constructor() {}
 
   async getAuthId(req: any): Promise<string> {
+    let authHeader: string;
     let token: string;
     let authId: string;
 
     try {
-      token = req.headers[TOKEN_HEADER];
-    } catch (error) {}
-
-    if (!token) {
-      console.log("ERROR: AuthService"); // TODO figure out AWS logging
+      authHeader = req.headers[TOKEN_HEADER];
+      [, token] = authHeader.split(" ");
+    } catch (error) {
+      console.log("ERROR: AuthService");
       console.log("No token found in headers");
       return authId;
     }
 
+    if (!token) {
+      console.log("ERROR: AuthService");
+      console.log("Token cannot be empty");
+      return authId;
+    }
+
     try {
-      authId = await this.extractTokenValues(token);
+      authId = await this.extractTokenValue(token);
     } catch (error) {
-      console.log("ERROR: AuthService"); // TODO figure out AWS logging
+      console.log("ERROR: AuthService");
       console.log("OAuth token not valid");
     }
 
     return authId;
   }
 
-  private async extractTokenValues(token: string) {
+  private async extractTokenValue(token: string) {
     let result: string;
 
     const { data } = await axios.get(TOKEN_VALIDATION_URL, {

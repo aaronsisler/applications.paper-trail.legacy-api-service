@@ -1,10 +1,10 @@
 import { HandlerResponse } from "../../models/handler-response";
-import { User } from "../../models/user";
+import { Transaction } from "../../models/transaction";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 import { AuthService } from "../../services/auth-service";
-import { UserService } from "../../services/user-service";
+import { TransactionService } from "../../services/transaction-service";
 
-const userGet = async (event: any, _context: any, callback: any) => {
+const transactionsGet = async (event: any, _context: any, callback: any) => {
   try {
     const authService = new AuthService();
     const authId: string = await authService.getAuthId(event);
@@ -17,12 +17,14 @@ const userGet = async (event: any, _context: any, callback: any) => {
       return callback(null, response);
     }
 
-    const userService = new UserService();
-    const user: User = await userService.getUser(authId);
+    const transactionService = new TransactionService();
+    const transactions: Transaction[] = await transactionService.getTransactions(
+      authId
+    );
 
     const response: HandlerResponse = responseBodyBuilder({
-      statusCode: user ? 200 : 204,
-      body: user
+      statusCode: 200,
+      body: transactions
     });
 
     return callback(null, response);
@@ -35,4 +37,4 @@ const userGet = async (event: any, _context: any, callback: any) => {
   }
 };
 
-export { userGet };
+export { transactionsGet };
