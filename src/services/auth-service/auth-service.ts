@@ -12,24 +12,16 @@ class AuthService {
 
     try {
       authHeader = req.headers[TOKEN_HEADER];
+      [, token] = authHeader.split(" ");
     } catch (error) {
       console.log("ERROR: AuthService");
       console.log("No token found in headers");
-      return authId;
-    }
-
-    try {
-      [, token] = authHeader.split(" ");
-    } catch (error) {
-      console.log("Here");
-      console.log("ERROR: AuthService");
-      console.log("Token not correct format in header");
       return authId;
     }
 
     if (!token) {
       console.log("ERROR: AuthService");
-      console.log("No token found in headers");
+      console.log("Token cannot be empty");
       return authId;
     }
 
