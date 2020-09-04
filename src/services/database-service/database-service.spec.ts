@@ -4,6 +4,8 @@ import aws from "aws-sdk";
 let mockDDBItem: jest.Mock;
 let mockGet: jest.Mock;
 
+jest.mock("../../config", () => ({ DATABASE_TABLE: "mock-ddb-table" }));
+
 jest.mock("aws-sdk", () => {
   return {
     config: {
@@ -16,8 +18,6 @@ jest.mock("aws-sdk", () => {
     }
   };
 });
-
-jest.mock("../../config", () => ({ DATABASE_TABLE: "mock-ddb-table" }));
 
 describe("DatabaseService", () => {
   let databaseService: DatabaseService;
