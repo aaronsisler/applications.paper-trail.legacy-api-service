@@ -1,6 +1,7 @@
 import express from "express";
 import { healthService } from "../services/health-service";
 import { UserService } from "../services/user-service";
+import { DatabaseService } from "../services/database-service";
 import { TransactionService } from "../services/transaction-service";
 import { Transaction } from "../models/transaction";
 import { User } from "../models/user";
@@ -13,6 +14,13 @@ app.get("/health", (_req, res) => {
   const body = healthService();
 
   return res.status(200).json(body);
+});
+
+app.get("/test", async (_req, res) => {
+  const databaseService = new DatabaseService();
+  await databaseService.getItem("userId", userId);
+
+  return res.status(200).json();
 });
 
 app.get("/user", async (req, res) => {
