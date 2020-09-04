@@ -2,12 +2,12 @@ import { UserService } from "./index";
 import { rawUserDetails } from "../../mocks/raw-user-details";
 import { user } from "../../mocks/user";
 
-let mockGetItem: jest.Mock;
+let mockFetch: jest.Mock;
 
 jest.mock("../../services/database-service", () => {
   return {
     DatabaseService: jest.fn().mockImplementation(() => ({
-      getItem: mockGetItem
+      fetch: mockFetch
     }))
   };
 });
@@ -41,13 +41,13 @@ describe("services/UserService", () => {
   describe("when a GET user is invoked", () => {
     describe("and is successful", () => {
       beforeEach(async () => {
-        mockGetItem = jest.fn().mockResolvedValue(rawUserDetails);
+        mockFetch = jest.fn().mockResolvedValue(rawUserDetails);
         userService = new UserService();
-        returnedUser = await userService.getUser("mock-user-id");
+        returnedUser = await userService.getUserDetails("mock-user-id");
       });
 
       it("should call the database service with correct parameters", () => {
-        expect(userService["databaseService"].getItem).toHaveBeenCalledWith(
+        expect(userService["databaseService"].fetch).toHaveBeenCalledWith(
           "userId",
           "mock-user-id",
           "userDetails"
@@ -63,13 +63,13 @@ describe("services/UserService", () => {
       const expectedError = "mock-error";
 
       beforeEach(async () => {
-        mockGetItem = jest.fn().mockRejectedValue(expectedError);
+        mockFetch = jest.fn().mockRejectedValue(expectedError);
         userService = new UserService();
-        returnedUser = await userService.getUser("mock-user-id");
+        returnedUser = await userService.getUserDetails("mock-user-id");
       });
 
       it("should call the database service with correct parameters", () => {
-        expect(userService["databaseService"].getItem).toHaveBeenCalledWith(
+        expect(userService["databaseService"].fetch).toHaveBeenCalledWith(
           "userId",
           "mock-user-id",
           "userDetails"

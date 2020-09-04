@@ -15,7 +15,7 @@ class TransactionService {
     try {
       const {
         transactions: rawTransactions
-      } = await this.databaseService.getItem("userId", userId, `transactions`);
+      } = await this.databaseService.fetch("userId", userId, `transactions`);
       transactions = this.mapRawTransactions(
         rawTransactions[DatabaseTypes.OBJECT]
       );

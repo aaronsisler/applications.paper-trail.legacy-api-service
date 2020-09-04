@@ -16,19 +16,11 @@ app.get("/health", (_req, res) => {
   return res.status(200).json(body);
 });
 
-app.get("/test", async (_req, res) => {
-  const databaseService = new DatabaseService();
-  await databaseService.getItem("userId", userId);
-
-  return res.status(200).json();
-});
-
 app.get("/user", async (req, res) => {
   const userService = new UserService();
-  const { userId } = req.params;
-  const user: User = await userService.getUser(userId);
+  const user: User = await userService.getUserDetails(userId);
 
-  return res.status(200).json({ user });
+  return res.status(200).json(user);
 });
 
 app.get("/transactions", async (req, res) => {
