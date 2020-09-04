@@ -55,7 +55,7 @@ describe("DatabaseService", () => {
 
     describe("and the call is successful", () => {
       beforeEach(async () => {
-        returnedItem = await databaseService.getItem(
+        returnedItem = await databaseService.fetch(
           "mock-string-key",
           "mock-string",
           "userDetails"
@@ -79,7 +79,7 @@ describe("DatabaseService", () => {
       beforeEach(async () => {
         mockDDBItem = jest.fn().mockRejectedValue("mock-error");
 
-        returnedItem = await databaseService.getItem(
+        returnedItem = await databaseService.fetch(
           "mock-string-key",
           "mock-string",
           "userDetails"
