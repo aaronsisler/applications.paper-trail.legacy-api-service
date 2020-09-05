@@ -45,7 +45,7 @@ describe("DatabaseService", () => {
       expect(aws.config.update).toHaveBeenCalledWith({ region: "us-east-1" });
     });
 
-    it("should set the api version correctly", () => {
+    it("should create a new instance of the correct type", () => {
       expect(aws.DynamoDB.DocumentClient).toHaveBeenCalled();
     });
   });
@@ -55,7 +55,7 @@ describe("DatabaseService", () => {
 
     describe("and the call is successful", () => {
       beforeEach(async () => {
-        returnedItem = await databaseService.fetch(
+        returnedItem = await databaseService.read(
           "mock-string-key",
           "mock-string",
           "userDetails"
@@ -79,7 +79,7 @@ describe("DatabaseService", () => {
       beforeEach(async () => {
         mockDDBItem = jest.fn().mockRejectedValue("mock-error");
 
-        returnedItem = await databaseService.fetch(
+        returnedItem = await databaseService.read(
           "mock-string-key",
           "mock-string",
           "userDetails"

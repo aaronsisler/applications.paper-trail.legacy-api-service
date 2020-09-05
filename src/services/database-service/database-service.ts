@@ -18,7 +18,7 @@ class DatabaseService {
     this.documentClient = new aws.DynamoDB.DocumentClient();
   }
 
-  async fetch(
+  async read(
     key: string,
     value: DatabaseValue,
     itemAttribute: string

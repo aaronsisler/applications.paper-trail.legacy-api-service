@@ -1,13 +1,13 @@
 import { UserService } from "./index";
 import { rawUserDetails } from "../../mocks/raw-user-details";
-import { user } from "../../mocks/user";
+import { userDetails } from "../../mocks/user-details";
 
-let mockFetch: jest.Mock;
+let mockRead: jest.Mock;
 
 jest.mock("../../services/database-service", () => {
   return {
     DatabaseService: jest.fn().mockImplementation(() => ({
-      fetch: mockFetch
+      read: mockRead
     }))
   };
 });
@@ -38,16 +38,16 @@ describe("services/UserService", () => {
     });
   });
 
-  describe("when a GET user is invoked", () => {
+  describe("when user details are requested", () => {
     describe("and is successful", () => {
       beforeEach(async () => {
-        mockFetch = jest.fn().mockResolvedValue(rawUserDetails);
+        mockRead = jest.fn().mockResolvedValue(rawUserDetails);
         userService = new UserService();
         returnedUser = await userService.getUserDetails("mock-user-id");
       });
 
       it("should call the database service with correct parameters", () => {
-        expect(userService["databaseService"].fetch).toHaveBeenCalledWith(
+        expect(userService["databaseService"].read).toHaveBeenCalledWith(
           "userId",
           "mock-user-id",
           "userDetails"
@@ -55,7 +55,7 @@ describe("services/UserService", () => {
       });
 
       it("should return the correct user", () => {
-        expect(returnedUser).toEqual(user);
+        expect(returnedUser).toEqual(userDetails);
       });
     });
 
@@ -63,13 +63,13 @@ describe("services/UserService", () => {
       const expectedError = "mock-error";
 
       beforeEach(async () => {
-        mockFetch = jest.fn().mockRejectedValue(expectedError);
+        mockRead = jest.fn().mockRejectedValue(expectedError);
         userService = new UserService();
         returnedUser = await userService.getUserDetails("mock-user-id");
       });
 
       it("should call the database service with correct parameters", () => {
-        expect(userService["databaseService"].fetch).toHaveBeenCalledWith(
+        expect(userService["databaseService"].read).toHaveBeenCalledWith(
           "userId",
           "mock-user-id",
           "userDetails"

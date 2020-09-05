@@ -14,7 +14,7 @@ class UserService {
     try {
       const {
         userDetails: rawUser
-      }: DatabaseItem = await this.databaseService.fetch(
+      }: DatabaseItem = await this.databaseService.read(
         "userId",
         userId,
         "userDetails"
