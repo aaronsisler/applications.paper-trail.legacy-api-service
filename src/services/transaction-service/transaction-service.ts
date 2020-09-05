@@ -1,7 +1,5 @@
 import { DatabaseService } from "../database-service";
 import { Transaction } from "../../models/transaction";
-import { TransactionMapper } from "../../mappers/transaction-mapper";
-import { DatabaseTypes } from "../../constants";
 
 class TransactionService {
   private databaseService: DatabaseService;
