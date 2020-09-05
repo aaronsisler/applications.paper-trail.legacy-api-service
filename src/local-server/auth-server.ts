@@ -21,7 +21,7 @@ app.get("/auth", async (req, res) => {
   }
 
   const userService: UserService = new UserService();
-  const user = await userService.getUser(authId);
+  const user = await userService.getUserDetails(authId);
   if (!user) {
     return res.status(204).send();
   } else {
