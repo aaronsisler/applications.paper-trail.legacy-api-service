@@ -2,7 +2,7 @@ import { handler } from "./index";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 
 let mockGetAuthId: jest.Mock;
-let mockGetUser: jest.Mock;
+let mockGetUserDetails: jest.Mock;
 
 jest.mock("../../services/auth-service", () => {
   return {
@@ -15,7 +15,7 @@ jest.mock("../../services/auth-service", () => {
 jest.mock("../../services/user-service", () => {
   return {
     UserService: jest.fn(() => ({
-      getUser: mockGetUser
+      getUserDetails: mockGetUserDetails
     }))
   };
 });
@@ -59,18 +59,18 @@ describe("handlers/user-get", () => {
   describe("when authentication is successful", () => {
     beforeEach(() => {
       mockGetAuthId = jest.fn().mockResolvedValue("mock-auth-id");
-      mockGetUser = jest.fn();
+      mockGetUserDetails = jest.fn();
     });
 
     it("should call user service with correct arguments", async () => {
       await handler(event, undefined, callback);
 
-      expect(mockGetUser).toHaveBeenCalledWith("mock-auth-id");
+      expect(mockGetUserDetails).toHaveBeenCalledWith("mock-auth-id");
     });
 
     describe("when fetched user is found", () => {
       beforeEach(async () => {
-        mockGetUser = jest.fn().mockResolvedValue("mock-user");
+        mockGetUserDetails = jest.fn().mockResolvedValue("mock-user");
         await handler(event, undefined, callback);
       });
 
@@ -88,7 +88,7 @@ describe("handlers/user-get", () => {
 
     describe("when fetched user is NOT found", () => {
       beforeEach(async () => {
-        mockGetUser = jest.fn().mockResolvedValue(undefined);
+        mockGetUserDetails = jest.fn().mockResolvedValue(undefined);
         await handler(event, undefined, callback);
       });
 
