@@ -18,7 +18,7 @@ const userGet = async (event: any, _context: any, callback: any) => {
     }
 
     const userService = new UserService();
-    const user: User = await userService.getUser(authId);
+    const user: User = await userService.getUserDetails(authId);
 
     const response: HandlerResponse = responseBodyBuilder({
       statusCode: user ? 200 : 204,

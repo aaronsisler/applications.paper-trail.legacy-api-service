@@ -1,6 +1,7 @@
 import express from "express";
 import { healthService } from "../services/health-service";
 import { UserService } from "../services/user-service";
+import { DatabaseService } from "../services/database-service";
 import { TransactionService } from "../services/transaction-service";
 import { Transaction } from "../models/transaction";
 import { User } from "../models/user";
@@ -17,10 +18,9 @@ app.get("/health", (_req, res) => {
 
 app.get("/user", async (req, res) => {
   const userService = new UserService();
-  const { userId } = req.params;
-  const user: User = await userService.getUser(userId);
+  const user: User = await userService.getUserDetails(userId);
 
-  return res.status(200).json({ user });
+  return res.status(200).json(user);
 });
 
 app.get("/transactions", async (req, res) => {
