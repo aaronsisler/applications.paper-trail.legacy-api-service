@@ -18,7 +18,7 @@ class DatabaseService {
     this.documentClient = new aws.DynamoDB.DocumentClient();
   }
 
-  async update(key: string, value: DatabaseValue): Promise<any> {
+  async create(key: string, value: DatabaseValue): Promise<any> {
     try {
       const transId = "789";
       const params = Object.assign(
