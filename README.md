@@ -13,12 +13,16 @@ TBD
   - Verifies the gateway is alive and reachable
 - /user
   - GET
-  - Retrieves a user with user ID as a path parameter
+  - Retrieves a user's details with auth token's subject Id as the identifier
+- /transactions
+  - GET
+  - Retrieves a user's transactions with auth token's subject Id as the identifier
+- /transactions
+  - POST
+  - Creates a transaction with auth token's subject Id as the identifier
 
 ### DynamoDB Model
 
 - userId
   - transactions
-  - user
-    - financialAccounts
-    - transactionCategories
+  - userDetails

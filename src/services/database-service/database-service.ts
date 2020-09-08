@@ -18,6 +18,35 @@ class DatabaseService {
     this.documentClient = new aws.DynamoDB.DocumentClient();
   }
 
+  async update(key: string, value: DatabaseValue): Promise<any> {
+    try {
+      const transId = "789";
+      const params = Object.assign(
+        {},
+        { TableName: this.tableName },
+        { Key: { userId: "123" } },
+        { UpdateExpression: "SET transactions.#transId = :newTrans" },
+        { ExpressionAttributeNames: { "#transId": transId } },
+        {
+          ExpressionAttributeValues: {
+            ":newTrans": { amount: 789.99 }
+          }
+        },
+        { ConditionExpression: "attribute_not_exists(transactions.#transId)" }
+      );
+
+      const response = await this.documentClient.update(params).promise();
+      console.log(response);
+
+      return;
+    } catch (error) {
+      console.log("ERROR: DatabaseService");
+      console.log(error);
+    }
+
+    return;
+  }
+
   async read(
     key: string,
     value: DatabaseValue,

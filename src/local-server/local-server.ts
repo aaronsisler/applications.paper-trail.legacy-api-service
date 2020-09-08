@@ -16,6 +16,13 @@ app.get("/health", (_req, res) => {
   return res.status(200).json(body);
 });
 
+app.get("/test", async (req, res) => {
+  const databaseService = new DatabaseService();
+  await databaseService.update("userId", "123");
+
+  return res.status(200).json("Worked");
+});
+
 app.get("/user", async (req, res) => {
   const userService = new UserService();
   const user: User = await userService.getUserDetails(userId);
