@@ -25,7 +25,7 @@ describe("services/AuthService", () => {
     consoleLogSpy.mockRestore();
   });
 
-  it.only("should be a class", () => {
+  it("should be a class", () => {
     expect(typeof AuthService).toEqual("function");
     expect(typeof authService).toEqual("object");
   });
