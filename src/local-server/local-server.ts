@@ -18,7 +18,7 @@ app.get("/health", (_req, res) => {
 
 app.get("/test", async (req, res) => {
   const databaseService = new DatabaseService();
-  await databaseService.update("userId", "123");
+  await databaseService.create("userId", "123");
 
   return res.status(200).json("Worked");
 });

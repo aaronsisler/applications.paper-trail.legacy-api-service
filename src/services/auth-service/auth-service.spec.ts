@@ -10,21 +10,22 @@ jest.mock("axios", () => ({ get: jest.fn() }));
 
 describe("services/AuthService", () => {
   let authService: AuthService;
-  let consoleLog: any;
+  let consoleLogSpy: jest.SpyInstance;
   let returnedAuthId: string;
   const mockRequest = { headers: { "mock-token-header": "Bearer mock-token" } };
 
   beforeEach(() => {
-    consoleLog = console.log;
+    consoleLogSpy = jest
+      .spyOn(console, "log")
+      .mockImplementation(() => jest.fn());
     authService = new AuthService();
-    console.log = jest.fn();
   });
 
   afterEach(() => {
-    console.log = consoleLog;
+    consoleLogSpy.mockRestore();
   });
 
-  it("should be a class", () => {
+  it.only("should be a class", () => {
     expect(typeof AuthService).toEqual("function");
     expect(typeof authService).toEqual("object");
   });
