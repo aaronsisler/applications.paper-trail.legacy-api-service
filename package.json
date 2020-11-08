@@ -10,7 +10,7 @@
     "lint": "eslint \"./**/*.ts\"",
     "prettier:format": "prettier 'src/**/*.ts' --write",
     "pretest": "rm -rf ./coverage",
-    "test": "jest",
+    "test": "jest --forceExit --detectOpenHandles --maxWorkers=10",
     "test:watch": "jest --watch",
     "test:health": "serverless invoke --function health --config=./deploy/serverless.beta.yml",
     "clear:serverless": "rm -rf ./.serverless",

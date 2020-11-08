@@ -4,29 +4,26 @@ import { responseBodyBuilder } from "../../utils/response-body-builder";
 let mockGetAuthId: jest.Mock;
 let mockGetUserDetails: jest.Mock;
 
-jest.mock("../../services/auth-service", () => {
-  return {
-    AuthService: jest.fn(() => ({
-      getAuthId: mockGetAuthId
-    }))
-  };
-});
+jest.mock("../../services/auth-service", () => ({
+  AuthService: jest.fn(() => ({
+    getAuthId: mockGetAuthId
+  }))
+}));
 
-jest.mock("../../services/user-service", () => {
-  return {
-    UserService: jest.fn(() => ({
-      getUserDetails: mockGetUserDetails
-    }))
-  };
-});
+jest.mock("../../services/user-service", () => ({
+  UserService: jest.fn(() => ({
+    getUserDetails: mockGetUserDetails
+  }))
+}));
 
-jest.mock("../../utils/response-body-builder", () => {
-  return { responseBodyBuilder: jest.fn(() => "mock-body-built-response") };
-});
+jest.mock("../../utils/response-body-builder", () => ({
+  responseBodyBuilder: jest.fn(() => "mock-body-built-response")
+}));
 
 describe("handlers/user-get", () => {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   let callback: Function;
-  let event: object;
+  let event: Record<string, unknown>;
 
   beforeEach(async () => {
     callback = jest.fn();
