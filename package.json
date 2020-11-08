@@ -10,7 +10,8 @@
     "lint": "eslint \"./**/*.ts\"",
     "prettier:format": "prettier 'src/**/*.ts' --write",
     "pretest": "rm -rf ./coverage",
-    "test": "jest --forceExit --detectOpenHandles --maxWorkers=10",
+    "test": "jest",
+    "test:old": "jest --forceExit --detectOpenHandles --maxWorkers=10",
     "test:watch": "jest --watch",
     "test:health": "serverless invoke --function health --config=./deploy/serverless.beta.yml",
     "clear:serverless": "rm -rf ./.serverless",
@@ -25,6 +26,7 @@
   "dependencies": {
     "aws-sdk": "^2.720.0",
     "axios": "^0.19.2",
+    "jest": "^26.6.3",
     "serverless-domain-manager": "^4.2.0"
   },
   "devDependencies": {
@@ -40,7 +42,6 @@
     "eslint-plugin-prettier": "^3.1.4",
     "express": "^4.17.1",
     "husky": "^4.2.5",
-    "jest": "^26.1.0",
     "lint-staged": "^10.2.11",
     "nodemon": "^2.0.4",
     "prettier": "^2.0.5",

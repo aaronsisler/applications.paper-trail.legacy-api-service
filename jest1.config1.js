@@ -1,9 +1,10 @@
 module.exports = {
-  collectCoverage: false,
+  collectCoverage: true,
   collectCoverageFrom: [
-    "<rootDir>/src/**/*.ts",
-    "!<rootDir>/src/models/*.ts", // No business logic should reside within models
-    "!<rootDir>/src/local-server/*.ts"
+    // "<rootDir>/src/**/*.ts",
+    "<rootDir>/src/config/*.ts"
+    // "!<rootDir>/src/models/*.ts", // No business logic should reside within models
+    // "!<rootDir>/src/local-server/*.ts"
   ],
   // A list of reporter names that Jest uses when writing coverage reports
   coverageReporters: ["lcov", "text", "html"],
