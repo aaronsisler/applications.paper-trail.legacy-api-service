@@ -1,13 +1,14 @@
 import { Health } from "../../models/health";
 
-const healthService = () => {
-  const currentTime = new Date().toTimeString();
-  const health: Health = {
-    message: "Hello! It looks like this service is working.",
-    currentTime
+class HealthService {
+  getHealth = (): Health => {
+    const health: Health = {
+      message: "Hello! It looks like this service is working.",
+      currentTime: new Date().toTimeString()
+    };
+
+    return health;
   };
+}
 
-  return health;
-};
-
-export { healthService };
+export { HealthService };

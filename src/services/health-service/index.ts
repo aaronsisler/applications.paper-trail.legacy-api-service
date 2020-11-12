@@ -1,3 +1,3 @@
-import { healthService } from "./health-service";
+import { HealthService } from "./health-service";
 
-export { healthService };
+export { HealthService };

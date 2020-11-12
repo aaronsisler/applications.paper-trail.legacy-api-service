@@ -1,11 +1,22 @@
-import { healthService } from "./index";
+import { HealthService } from "./index";
 import { Health } from "../../models/health";
 
 describe("services/healthService", () => {
   let health: Health;
+  let healthService: HealthService;
 
   beforeEach(() => {
-    health = healthService();
+    healthService = new HealthService();
+    health = healthService.getHealth();
+  });
+
+  afterAll(() => {
+    jest.resetAllMocks();
+  });
+
+  it("should be a class", () => {
+    expect(typeof HealthService).toEqual("function");
+    expect(typeof healthService).toEqual("object");
   });
 
   it("should return the correct message", () => {

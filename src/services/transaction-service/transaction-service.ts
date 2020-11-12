@@ -1,5 +1,6 @@
 import { DatabaseService } from "../database-service";
 import { Transaction } from "../../models/transaction";
+import { errorLogger } from "../../utils/error-logger";
 
 class TransactionService {
   private databaseService: DatabaseService;
@@ -19,8 +20,7 @@ class TransactionService {
 
       transactions = this.mapRawTransactions(rawTransactions);
     } catch (error) {
-      console.log("ERROR: TransactionService");
-      console.log(error);
+      errorLogger(TransactionService.name, error);
     }
 
     return transactions;

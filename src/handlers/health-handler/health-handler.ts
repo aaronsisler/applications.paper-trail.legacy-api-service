@@ -1,13 +1,24 @@
-import { healthService } from "../../services/health-service";
+import {
+  APIGatewayProxyHandler,
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  Callback,
+  Context
+} from "aws-lambda";
+import { HealthService } from "../../services/health-service";
 import { HandlerResponse } from "../../models/handler-response";
 import { Health } from "../../models/health";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 
-const health = (_event: any, _context: any, callback: any) => {
-  const health: Health = healthService();
+const health: APIGatewayProxyHandler = (
+  _event: APIGatewayProxyEvent,
+  _context: Context,
+  callback: Callback<APIGatewayProxyResult>
+) => {
+  const healthStatus: Health = new HealthService().getHealth();
   const response: HandlerResponse = responseBodyBuilder({
     statusCode: 200,
-    body: health
+    body: healthStatus
   });
 
   callback(null, response);
