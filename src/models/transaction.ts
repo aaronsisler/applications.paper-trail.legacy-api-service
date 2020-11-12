@@ -1,12 +1,20 @@
 export class Transaction {
   transId: string; // DDB unique generated ID
+
   sourceTransId: string; // transaction_id string Transaction Id from 3rd party API
+
   amount: number; // amount number
+
   financialAccountId: string; // account_id string
+
   transCategoryIds: string[]; // category string[]
+
   transDate: string; // date string
+
   merchantName: string; // merchant_name string
+
   merchantAltName: string; // name string
+
   isPending: boolean; // pending boolean
 
   constructor(options?: {

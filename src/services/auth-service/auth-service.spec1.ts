@@ -1,5 +1,6 @@
 import axios from "axios";
 import { AuthService } from "./index";
+import { errorLogger } from "../../utils/error-logger";
 
 jest.mock("../../config", () => ({
   TOKEN_HEADER: "mock-token-header",
@@ -8,21 +9,21 @@ jest.mock("../../config", () => ({
 
 jest.mock("axios", () => ({ get: jest.fn() }));
 
+jest.mock("../../utils/error-logger", () => ({
+  errorLogger: jest.fn().mockReturnThis()
+}));
+
 describe("services/AuthService", () => {
   let authService: AuthService;
-  let consoleLogSpy: jest.SpyInstance;
   let returnedAuthId: string;
   const mockRequest = { headers: { "mock-token-header": "Bearer mock-token" } };
 
   beforeEach(() => {
-    consoleLogSpy = jest
-      .spyOn(console, "log")
-      .mockImplementation(() => jest.fn());
     authService = new AuthService();
   });
 
-  afterEach(() => {
-    consoleLogSpy.mockRestore();
+  afterAll(() => {
+    jest.resetAllMocks();
   });
 
   it("should be a class", () => {
@@ -42,8 +43,10 @@ describe("services/AuthService", () => {
       });
 
       it("should log correct messages to the console", () => {
-        expect(console.log).toHaveBeenCalledWith("ERROR: AuthService");
-        expect(console.log).toHaveBeenCalledWith("No token found in headers");
+        expect(errorLogger).toHaveBeenCalledWith(
+          "AuthService",
+          "No token found in headers"
+        );
       });
     });
 
@@ -61,8 +64,10 @@ describe("services/AuthService", () => {
         });
 
         it("should log correct messages to the console", () => {
-          expect(console.log).toHaveBeenCalledWith("ERROR: AuthService");
-          expect(console.log).toHaveBeenCalledWith("No token found in headers");
+          expect(errorLogger).toHaveBeenCalledWith(
+            "AuthService",
+            "No token found in headers"
+          );
         });
       });
 
@@ -79,8 +84,10 @@ describe("services/AuthService", () => {
         });
 
         it("should log correct messages to the console", () => {
-          expect(console.log).toHaveBeenCalledWith("ERROR: AuthService");
-          expect(console.log).toHaveBeenCalledWith("Token cannot be empty");
+          expect(errorLogger).toHaveBeenCalledWith(
+            "AuthService",
+            "Token cannot be empty"
+          );
         });
       });
 
@@ -131,8 +138,10 @@ describe("services/AuthService", () => {
           });
 
           it("should log correct messages to the console", () => {
-            expect(console.log).toHaveBeenCalledWith("ERROR: AuthService");
-            expect(console.log).toHaveBeenCalledWith("OAuth token not valid");
+            expect(errorLogger).toHaveBeenCalledWith(
+              "AuthService",
+              "OAuth token not valid"
+            );
           });
         });
       });

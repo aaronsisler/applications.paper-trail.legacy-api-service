@@ -1,13 +1,4 @@
 {
-  // "compilerOptions": {
-  //   "target": "es5",
-  //   "module": "commonjs",
-  //   "lib": ["es2015"],
-  //   "strict": true,
-  //   "declaration": true,
-  //   "outDir": "dist",
-  //   "sourceMap": true
-  // },
   "compilerOptions": {
     "module": "commonjs",
     "esModuleInterop": true,
