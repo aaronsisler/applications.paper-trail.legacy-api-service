@@ -1,9 +1,7 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": [
-    "@typescript-eslint","prettier"
-  ],
+  "plugins": ["@typescript-eslint", "prettier"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -16,6 +14,7 @@
     "arrow-parens": "off",
     "comma-dangle": "off",
     "implicit-arrow-linebreak": "off",
+    "import/no-unresolved": "off",
     "import/prefer-default-export": "off",
     "import/extensions": [
       "error",
@@ -32,12 +31,12 @@
   },
   "overrides": [
     {
-     "files": ["**/*.spec.ts"],
-        "rules": {
-           "no-console": "off"   
-        }
+      "files": ["**/*.spec.ts"],
+      "rules": {
+        "no-console": "off"
+      }
     }
-   ],
+  ],
   "env": {
     "commonjs": true,
     "es6": true,
@@ -51,32 +50,4 @@
       }
     }
   }
-  // "extends": ["prettier", "airbnb-base"],
-  // "plugins": ["prettier"],
-  // "globals": {
-  //   "Atomics": "readonly",
-  //   "SharedArrayBuffer": "readonly"
-  // },
-  // "parserOptions": {
-  //   "ecmaVersion": 2018
-  // },
-  // "rules": {
-  //   "quotes": "off",
-  //   "arrow-parens": "off",
-  //   "comma-dangle": "off",
-  //   "implicit-arrow-linebreak": "off",
-  //   "import/prefer-default-export": "off",
-  //   "import/extensions": [
-  //     "error",
-  //     {
-  //       "ts": "never"
-  //     }
-  //   ],
-  //   "prettier/prettier": [
-  //     "error",
-  //     {
-  //       "printWidth": 80
-  //     }
-  //   ]
-  // }
 }

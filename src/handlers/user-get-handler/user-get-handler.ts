@@ -1,10 +1,21 @@
+import {
+  APIGatewayProxyHandler,
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  Callback,
+  Context
+} from "aws-lambda";
 import { HandlerResponse } from "../../models/handler-response";
 import { User } from "../../models/user";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 import { AuthService } from "../../services/auth-service";
 import { UserService } from "../../services/user-service";
 
-const userGet = async (event: any, _context: any, callback: any) => {
+const userGet: APIGatewayProxyHandler = async (
+  event: APIGatewayProxyEvent,
+  _context: Context,
+  callback: Callback<APIGatewayProxyResult>
+): Promise<APIGatewayProxyResult> => {
   try {
     const authService = new AuthService();
     const authId: string = await authService.getAuthId(event);
@@ -14,7 +25,8 @@ const userGet = async (event: any, _context: any, callback: any) => {
         body: "Unauthorized"
       });
 
-      return callback(null, response);
+      callback(null, response);
+      return;
     }
 
     const userService = new UserService();
@@ -25,13 +37,14 @@ const userGet = async (event: any, _context: any, callback: any) => {
       body: user
     });
 
-    return callback(null, response);
+    callback(null, response);
   } catch (error) {
     const response: HandlerResponse = responseBodyBuilder({
       statusCode: 500,
       body: "Error: Something went wrong"
     });
-    return callback(null, response);
+
+    callback(null, response);
   }
 };
 
