@@ -1,30 +1,31 @@
 import { TransactionService } from "./index";
 import { rawTransactions } from "../../mocks/raw-transactions";
 import { transactions } from "../../mocks/transactions";
+import { errorLogger } from "../../utils/error-logger";
+import { Transaction } from "../../models/transaction";
 
 let mockRead: jest.Mock;
 
-jest.mock("../../services/database-service", () => {
-  return {
-    DatabaseService: jest.fn().mockImplementation(() => ({
-      read: mockRead
-    }))
-  };
-});
+jest.mock("../../services/database-service", () => ({
+  DatabaseService: jest.fn().mockImplementation(() => ({
+    read: mockRead
+  }))
+}));
+
+jest.mock("../../utils/error-logger", () => ({
+  errorLogger: jest.fn().mockReturnThis()
+}));
 
 describe("services/TransactionService", () => {
   let transactionService: TransactionService;
-  let consoleLog: any;
-  let returnedTransactions: any[];
+  let returnedTransactions: Transaction[];
 
   beforeEach(() => {
-    consoleLog = console.log;
     transactionService = new TransactionService();
-    console.log = jest.fn();
   });
 
-  afterEach(() => {
-    console.log = consoleLog;
+  afterAll(() => {
+    jest.resetAllMocks();
   });
 
   it("should be a class", () => {
@@ -32,13 +33,7 @@ describe("services/TransactionService", () => {
     expect(typeof transactionService).toEqual("object");
   });
 
-  describe("when instantiated", () => {
-    it("should create a new database service instance", () => {
-      expect(transactionService["databaseService"]).toBeDefined();
-    });
-  });
-
-  describe("when transactions are queried", () => {
+  describe("when transactions are requested", () => {
     describe("and the call is successful", () => {
       beforeEach(async () => {
         mockRead = jest.fn().mockResolvedValue(rawTransactions);
@@ -48,8 +43,8 @@ describe("services/TransactionService", () => {
         );
       });
 
-      it("should call the database service with correct parameters", () => {
-        expect(transactionService["databaseService"].read).toHaveBeenCalledWith(
+      it("should read from the database using the correct parameters", () => {
+        expect(mockRead).toHaveBeenCalledWith(
           "userId",
           "mock-user-id",
           "transactions"
@@ -72,8 +67,8 @@ describe("services/TransactionService", () => {
         );
       });
 
-      it("should call the database service with correct parameters", () => {
-        expect(transactionService["databaseService"].read).toHaveBeenCalledWith(
+      it("should read from the database using the correct parameters", () => {
+        expect(mockRead).toHaveBeenCalledWith(
           "userId",
           "mock-user-id",
           "transactions"
@@ -85,8 +80,10 @@ describe("services/TransactionService", () => {
       });
 
       it("should log correct messages to the console", () => {
-        expect(console.log).toHaveBeenCalledWith("ERROR: TransactionService");
-        expect(console.log).toHaveBeenCalledWith(expectedError);
+        expect(errorLogger).toHaveBeenCalledWith(
+          "TransactionService",
+          expectedError
+        );
       });
     });
   });
