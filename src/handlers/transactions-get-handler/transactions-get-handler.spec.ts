@@ -1,3 +1,4 @@
+import { APIGatewayProxyResult, Callback } from "aws-lambda";
 import { handler } from "./index";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 
@@ -21,8 +22,9 @@ jest.mock("../../utils/response-body-builder", () => ({
 }));
 
 describe("handlers/transactions-get", () => {
-  let callback: unknown;
-  let event: Record<string, unknown>;
+  let callback: Callback<APIGatewayProxyResult>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let event: any;
 
   beforeEach(async () => {
     callback = jest.fn();
