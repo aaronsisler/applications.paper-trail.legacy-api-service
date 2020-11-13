@@ -2,14 +2,20 @@ import axios from "axios";
 import { errorLogger } from "../../utils/error-logger";
 import { TOKEN_HEADER, TOKEN_VALIDATION_URL } from "../../config";
 
+interface AuthRequest {
+  headers: {
+    [key: string]: string;
+  };
+}
+
 class AuthService {
-  async getAuthId(req: any): Promise<string> {
+  async getAuthId(authRequest: AuthRequest): Promise<string> {
     let authHeader: string;
     let token: string;
     let authId: string;
 
     try {
-      authHeader = req.headers[TOKEN_HEADER];
+      authHeader = authRequest.headers[TOKEN_HEADER];
       [, token] = authHeader.split(" ");
     } catch (error) {
       errorLogger("AuthService", "No token found in headers");
@@ -17,7 +23,7 @@ class AuthService {
     }
 
     if (!token) {
-      errorLogger("AuthService", "No token found in headers");
+      errorLogger("AuthService", "Token cannot be empty");
       return authId;
     }
 
@@ -41,4 +47,4 @@ class AuthService {
   };
 }
 
-export { AuthService };
+export { AuthService, AuthRequest };

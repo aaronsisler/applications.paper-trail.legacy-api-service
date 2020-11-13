@@ -26,14 +26,15 @@ class TransactionService {
     return transactions;
   }
 
-  private mapRawTransactions(rawTransactions: any): Transaction[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private mapRawTransactions = (rawTransactions: any): Transaction[] => {
     const transactions: Transaction[] = Object.keys(rawTransactions).map(
       (key: string) =>
         new Transaction({ transId: key, ...rawTransactions[key] })
     );
 
     return transactions;
-  }
+  };
 }
 
 export { TransactionService };

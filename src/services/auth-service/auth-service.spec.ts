@@ -1,5 +1,5 @@
 import axios from "axios";
-import { AuthService } from "./index";
+import { AuthService, AuthRequest } from "./index";
 import { errorLogger } from "../../utils/error-logger";
 
 jest.mock("../../config", () => ({
@@ -16,7 +16,9 @@ jest.mock("../../utils/error-logger", () => ({
 describe("services/AuthService", () => {
   let authService: AuthService;
   let returnedAuthId: string;
-  const mockRequest = { headers: { "mock-token-header": "Bearer mock-token" } };
+  const mockRequest: AuthRequest = {
+    headers: { "mock-token-header": "Bearer mock-token" }
+  };
 
   beforeEach(() => {
     authService = new AuthService();
@@ -35,7 +37,9 @@ describe("services/AuthService", () => {
     describe("and headers do NOT contain correct token header", () => {
       beforeEach(async () => {
         authService = new AuthService();
-        returnedAuthId = await authService.getAuthId({});
+        returnedAuthId = await authService.getAuthId({
+          headers: { "mock-header": "empty" }
+        });
       });
 
       it("should return the correct user", () => {
