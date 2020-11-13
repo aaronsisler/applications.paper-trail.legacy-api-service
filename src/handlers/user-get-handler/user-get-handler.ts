@@ -1,6 +1,6 @@
 import {
-  APIGatewayProxyHandler,
   APIGatewayProxyEvent,
+  APIGatewayProxyHandler,
   APIGatewayProxyResult,
   Callback,
   Context

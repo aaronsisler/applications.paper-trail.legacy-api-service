@@ -1,15 +1,10 @@
 import axios from "axios";
+import { HandlerRequest } from "../../models/handler-request";
 import { errorLogger } from "../../utils/error-logger";
 import { TOKEN_HEADER, TOKEN_VALIDATION_URL } from "../../config";
 
-interface AuthRequest {
-  headers: {
-    [key: string]: string;
-  };
-}
-
 class AuthService {
-  async getAuthId(authRequest: AuthRequest): Promise<string> {
+  async getAuthId(authRequest: HandlerRequest): Promise<string> {
     let authHeader: string;
     let token: string;
     let authId: string;
@@ -47,4 +42,4 @@ class AuthService {
   };
 }
 
-export { AuthService, AuthRequest };
+export { AuthService };

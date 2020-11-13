@@ -23,7 +23,8 @@ jest.mock("../../utils/response-body-builder", () => ({
 
 describe("handlers/user-get", () => {
   let callback: Callback<APIGatewayProxyResult>;
-  let event: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let event: any;
 
   beforeEach(async () => {
     callback = jest.fn();

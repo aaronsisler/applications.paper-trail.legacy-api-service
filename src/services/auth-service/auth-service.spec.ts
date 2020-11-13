@@ -1,5 +1,6 @@
 import axios from "axios";
-import { AuthService, AuthRequest } from "./index";
+import { HandlerRequest } from "../../models/handler-request";
+import { AuthService } from "./index";
 import { errorLogger } from "../../utils/error-logger";
 
 jest.mock("../../config", () => ({
@@ -16,7 +17,7 @@ jest.mock("../../utils/error-logger", () => ({
 describe("services/AuthService", () => {
   let authService: AuthService;
   let returnedAuthId: string;
-  const mockRequest: AuthRequest = {
+  const mockRequest: HandlerRequest = {
     headers: { "mock-token-header": "Bearer mock-token" }
   };
 
