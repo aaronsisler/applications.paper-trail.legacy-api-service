@@ -20,7 +20,7 @@ class UserService {
         userId,
         "userDetails"
       );
-      return { userId, ...rawUser };
+      return { userId, ...(rawUser as User) };
     } catch (error) {
       errorLogger(UserService.name, error);
     }

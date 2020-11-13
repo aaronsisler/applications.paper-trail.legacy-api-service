@@ -1,4 +1,3 @@
-/* eslint-disable function-paren-newline */
 import { UserService } from "./index";
 import { rawUserDetails } from "../../mocks/raw-user-details";
 import { userDetails } from "../../mocks/user-details";
