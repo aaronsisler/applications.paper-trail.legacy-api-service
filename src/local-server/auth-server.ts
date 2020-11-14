@@ -6,13 +6,8 @@ import { UserService } from "../services/user-service";
 const app = express();
 const port = process.env.PORT || "9001";
 
-app.get("/health", (_req, res) => {
-  const body = new HealthService().getHealth();
-
-  return res.status(200).json(body);
-});
-
 app.get("/auth", async (req, res) => {
+  console.log(req);
   const authService: AuthService = new AuthService();
   const authId: string = await authService.getAuthId(req);
 
@@ -26,6 +21,12 @@ app.get("/auth", async (req, res) => {
     return res.status(204).send();
   }
   return res.status(200).json(user);
+});
+
+app.get("/health", (_req, res) => {
+  const body = new HealthService().getHealth();
+
+  return res.status(200).json(body);
 });
 
 app

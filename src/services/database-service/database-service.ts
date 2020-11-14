@@ -35,12 +35,12 @@ class DatabaseService {
   //       ConditionExpression: "attribute_not_exists(transactions.#transId)"
   //     };
 
-  //     const response = await this.documentClient.update(params).promise();
+  //     const response = await this.documentClient.put(params).promise();
+  //     console.log(Response);
 
   //     return;
   //   } catch (error) {
-  //     console.log("ERROR: DatabaseService");
-  //     console.log(error);
+  //     errorLogger("DatabaseService", error);
   //   }
 
   //   return;

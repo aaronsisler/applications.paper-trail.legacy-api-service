@@ -1,7 +1,7 @@
 import axios from "axios";
 import { HandlerRequest } from "../../models/handler-request";
 import { errorLogger } from "../../utils/error-logger";
-import { TOKEN_HEADER, TOKEN_VALIDATION_URL } from "../../config";
+import { TOKEN_VALIDATION_URL } from "../../config";
 
 class AuthService {
   async getAuthId(authRequest: HandlerRequest): Promise<string> {
@@ -10,7 +10,7 @@ class AuthService {
     let authId: string;
 
     try {
-      authHeader = authRequest.headers[TOKEN_HEADER];
+      authHeader = authRequest.headers.authorization;
       [, token] = authHeader.split(" ");
     } catch (error) {
       errorLogger("AuthService", "No token found in headers");
