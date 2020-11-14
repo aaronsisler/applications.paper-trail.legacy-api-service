@@ -13,7 +13,7 @@
     <a href="#" onclick="signOut();">Sign out</a>
     <br />
     <p id="userInfo"></p>
-    <p id="token"></p>
+    <p><span id="token"></span></p>
     <button onclick="copyToClipboard();">Copy To Clipboard</button>
     <script>
       function onSignIn(googleUser) {
@@ -42,9 +42,12 @@
       }
 
       function appendMessage(message, markupId = "userInfo") {
-        console.log(markupId);
         document.getElementById(markupId).append(message);
-        document.getElementById(markupId).append(document.createElement("br"));
+        if (markupId === "userInfo") {
+          document
+            .getElementById(markupId)
+            .append(document.createElement("br"));
+        }
       }
 
       function clearMessages() {
