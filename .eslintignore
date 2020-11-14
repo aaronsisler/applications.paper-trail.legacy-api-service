@@ -2,3 +2,4 @@
 /dist
 /coverage
 /.serverless
+src/local-server/**

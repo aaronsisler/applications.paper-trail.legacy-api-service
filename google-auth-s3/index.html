@@ -12,39 +12,56 @@
     <br />
     <a href="#" onclick="signOut();">Sign out</a>
     <br />
-    <p id="log"></p>
+    <p id="userInfo"></p>
+    <p><span id="token"></span></p>
+    <button onclick="copyToClipboard();">Copy To Clipboard</button>
     <script>
       function onSignIn(googleUser) {
         // Useful data for your client-side scripts:
         var profile = googleUser.getBasicProfile();
-        clearLogMessages();
-        logMessage("ID: " + profile.getId()); // Don't send this directly to your server!
-        logMessage("Full Name: " + profile.getName());
-        logMessage("Given Name: " + profile.getGivenName());
-        logMessage("Family Name: " + profile.getFamilyName());
-        logMessage("Image URL: " + profile.getImageUrl());
-        logMessage("Email: " + profile.getEmail());
+        clearMessages();
+        appendMessage("ID: " + profile.getId()); // Don't send this directly to your server!
+        appendMessage("Full Name: " + profile.getName());
+        appendMessage("Given Name: " + profile.getGivenName());
+        appendMessage("Family Name: " + profile.getFamilyName());
+        appendMessage("Image URL: " + profile.getImageUrl());
+        appendMessage("Email: " + profile.getEmail());
+        appendMessage("ID Token: ");
 
         // The ID token you need to pass to your backend:
         var id_token = googleUser.getAuthResponse().id_token;
-        logMessage("ID Token: " + id_token);
+        appendMessage(id_token, "token");
       }
 
       function signOut() {
         var auth2 = gapi.auth2.getAuthInstance();
-        clearLogMessages();
+        clearMessages();
         auth2.signOut().then(function () {
-          logMessage("User signed out.");
+          appendMessage("User signed out.");
         });
       }
 
-      function logMessage(message) {
-        document.getElementById("log").append(message);
-        document.getElementById("log").append(document.createElement("br"));
+      function appendMessage(message, markupId = "userInfo") {
+        document.getElementById(markupId).append(message);
+        if (markupId === "userInfo") {
+          document
+            .getElementById(markupId)
+            .append(document.createElement("br"));
+        }
       }
 
-      function clearLogMessages() {
-        document.getElementById("log").innerHTML = "";
+      function clearMessages() {
+        document.getElementById("userInfo").innerHTML = "";
+        document.getElementById("token").innerHTML = "";
+      }
+
+      function copyToClipboard() {
+        var range = document.createRange();
+        range.selectNode(document.getElementById("token"));
+        window.getSelection().removeAllRanges(); // clear current selection
+        window.getSelection().addRange(range); // to select text
+        document.execCommand("copy");
+        window.getSelection().removeAllRanges(); // to deselect
       }
     </script>
   </body>

@@ -1,6 +1,7 @@
 import { User } from "../../models/user";
 import { DatabaseService } from "../database-service";
 import { DatabaseItem } from "../../models/database-item";
+import { errorLogger } from "../../utils/error-logger";
 
 class UserService {
   private databaseService: DatabaseService;
@@ -19,10 +20,9 @@ class UserService {
         userId,
         "userDetails"
       );
-      return { userId, ...rawUser };
+      return { userId, ...(rawUser as User) };
     } catch (error) {
-      console.log("ERROR: UserService");
-      console.log(error);
+      errorLogger(UserService.name, error);
     }
 
     return user;

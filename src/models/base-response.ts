@@ -1,4 +1,4 @@
 export interface BaseResponse {
   statusCode: number;
-  body: any;
+  body: unknown;
 }

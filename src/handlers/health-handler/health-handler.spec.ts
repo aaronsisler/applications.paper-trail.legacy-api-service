@@ -1,36 +1,50 @@
+import { APIGatewayProxyResult, Callback } from "aws-lambda";
 import { handler } from "./index";
+import { Health } from "../../models/health";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 
-const mockHealth = { returned: "value" };
+const mockHealth: Health = {
+  message: "mock-message",
+  currentTime: "mock-current-time"
+};
 const mockResponse = { statusCode: 200, body: mockHealth };
 
-jest.mock("../../services/health-service", () => {
-  return { healthService: () => mockHealth };
-});
+let mockGetHealth: jest.Mock;
 
-jest.mock("../../utils/response-body-builder", () => {
-  return { responseBodyBuilder: jest.fn(() => "body-built-response") };
-});
+jest.mock("../../services/health-service", () => ({
+  HealthService: jest.fn().mockImplementation(() => ({
+    getHealth: mockGetHealth
+  }))
+}));
+
+jest.mock("../../utils/response-body-builder", () => ({
+  responseBodyBuilder: jest.fn().mockReturnValue("mock-built-response")
+}));
 
 describe("handlers/health", () => {
-  it("should be a function", () => {
+  it("should be the correct type", () => {
     expect(typeof handler).toEqual("function");
   });
 
   describe("when handler is invoked", () => {
-    let callback: Function;
+    let callback: Callback<APIGatewayProxyResult>;
 
     beforeEach(() => {
+      mockGetHealth = jest.fn().mockReturnValue(mockHealth);
       callback = jest.fn();
       handler(undefined, undefined, callback);
     });
 
-    it("should call response body builder with correct arguments", () => {
+    afterAll(() => {
+      jest.resetAllMocks();
+    });
+
+    it("should create the response correctly", () => {
       expect(responseBodyBuilder).toHaveBeenCalledWith(mockResponse);
     });
 
     it("should envoke callback with correct arguments", () => {
-      expect(callback).toHaveBeenCalledWith(null, "body-built-response");
+      expect(callback).toHaveBeenCalledWith(null, "mock-built-response");
     });
   });
 });

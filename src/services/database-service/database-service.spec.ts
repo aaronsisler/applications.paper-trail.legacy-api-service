@@ -1,38 +1,39 @@
-import { DatabaseService } from "./index";
 import aws from "aws-sdk";
+import { DatabaseService } from "./index";
+import { errorLogger } from "../../utils/error-logger";
+import { DatabaseItem } from "../../models/database-item";
 
 let mockDDBItem: jest.Mock;
 let mockGet: jest.Mock;
 
 jest.mock("../../config", () => ({ DATABASE_TABLE: "mock-ddb-table" }));
 
-jest.mock("aws-sdk", () => {
-  return {
-    config: {
-      update: jest.fn()
-    },
-    DynamoDB: {
-      DocumentClient: jest.fn().mockImplementation(() => ({
-        get: mockGet
-      }))
-    }
-  };
-});
+jest.mock("aws-sdk", () => ({
+  config: {
+    update: jest.fn()
+  },
+  DynamoDB: {
+    DocumentClient: jest.fn().mockImplementation(() => ({
+      get: mockGet
+    }))
+  }
+}));
+
+jest.mock("../../utils/error-logger", () => ({
+  errorLogger: jest.fn().mockReturnThis()
+}));
 
 describe("DatabaseService", () => {
   let databaseService: DatabaseService;
-  let consoleLog: any;
 
   beforeEach(() => {
     mockDDBItem = jest.fn().mockResolvedValue({ Item: "mock-item" });
     mockGet = jest.fn(() => ({ promise: mockDDBItem }));
     databaseService = new DatabaseService();
-    consoleLog = console.log;
-    console.log = jest.fn();
   });
 
-  afterEach(() => {
-    console.log = consoleLog;
+  afterAll(() => {
+    jest.resetAllMocks();
   });
 
   it("should be a class", () => {
@@ -51,7 +52,7 @@ describe("DatabaseService", () => {
   });
 
   describe("when a record is requested", () => {
-    let returnedItem: any;
+    let returnedItem: DatabaseItem;
 
     describe("and the call is successful", () => {
       beforeEach(async () => {
@@ -97,10 +98,11 @@ describe("DatabaseService", () => {
       it("should return the correct item", () => {
         expect(returnedItem).toEqual(undefined);
       });
-
-      it("should call the console log with correct message", () => {
-        expect(console.log).toHaveBeenCalledWith("ERROR: DatabaseService");
-        expect(console.log).toHaveBeenCalledWith("mock-error");
+      it("should log correct messages to the console", () => {
+        expect(errorLogger).toHaveBeenCalledWith(
+          "DatabaseService",
+          "mock-error"
+        );
       });
     });
   });

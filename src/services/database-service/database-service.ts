@@ -3,20 +3,48 @@ import aws, { DynamoDB } from "aws-sdk";
 import { DatabaseValue } from "../../models/database-value";
 import { DatabaseItem } from "../../models/database-item";
 import { DATABASE_TABLE } from "../../config";
+import { errorLogger } from "../../utils/error-logger";
 
 interface Params {
   TableName: string;
   Key: DatabaseItem;
+  ProjectionExpression?: string;
 }
 
 class DatabaseService {
   private documentClient: DynamoDB.DocumentClient;
-  private _tableName: string = DATABASE_TABLE;
+
+  private tableName: string = DATABASE_TABLE;
 
   constructor() {
     aws.config.update({ region: "us-east-1" });
     this.documentClient = new aws.DynamoDB.DocumentClient();
   }
+
+  // async create(key: string, value: DatabaseValue): Promise<any> {
+  //   try {
+  //     const transId = "789";
+  //     const params = {
+  //       TableName: this.tableName,
+  //       Key: { userId: "123" },
+  //       UpdateExpression: "SET transactions.#transId = :newTrans",
+  //       ExpressionAttributeNames: { "#transId": transId },
+  //       ExpressionAttributeValues: {
+  //         ":newTrans": { amount: 789.99 }
+  //       },
+  //       ConditionExpression: "attribute_not_exists(transactions.#transId)"
+  //     };
+
+  //     const response = await this.documentClient.update(params).promise();
+
+  //     return;
+  //   } catch (error) {
+  //     console.log("ERROR: DatabaseService");
+  //     console.log(error);
+  //   }
+
+  //   return;
+  // }
 
   async read(
     key: string,
@@ -30,8 +58,7 @@ class DatabaseService {
 
       return item;
     } catch (error) {
-      console.log("ERROR: DatabaseService");
-      console.log(error);
+      errorLogger("DatabaseService", error);
     }
 
     return undefined;
@@ -43,17 +70,11 @@ class DatabaseService {
     itemAttribute: string
   ): Params {
     const paramKey = { [key]: value };
-    const returnedParams = Object.assign(
-      {},
-      { TableName: this.tableName },
-      { Key: paramKey },
-      { ProjectionExpression: itemAttribute }
-    );
-    return returnedParams;
-  }
-
-  get tableName(): string {
-    return this._tableName;
+    return {
+      TableName: this.tableName,
+      Key: paramKey,
+      ProjectionExpression: itemAttribute
+    };
   }
 }
 

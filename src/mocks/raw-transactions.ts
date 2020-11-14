@@ -1,6 +1,6 @@
 const rawTransactions = {
   transactions: {
-    "123": {
+    123: {
       amount: 123.45,
       financialAccountId: "mock-financial-account-id-123",
       isPending: false,
@@ -10,7 +10,7 @@ const rawTransactions = {
       transCategoryIds: ["mock-trans-cat-id-1", "mock-trans-cat-id-2"],
       transDate: "mock-trans-date-123"
     },
-    "456": {
+    456: {
       amount: 456.78,
       financialAccountId: "mock-financial-account-id-456",
       isPending: false,

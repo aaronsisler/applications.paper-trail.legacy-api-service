@@ -1,32 +1,30 @@
+import { APIGatewayProxyResult, Callback } from "aws-lambda";
 import { handler } from "./index";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 
 let mockGetAuthId: jest.Mock;
 let mockGetTransactions: jest.Mock;
 
-jest.mock("../../services/auth-service", () => {
-  return {
-    AuthService: jest.fn(() => ({
-      getAuthId: mockGetAuthId
-    }))
-  };
-});
+jest.mock("../../services/auth-service", () => ({
+  AuthService: jest.fn(() => ({
+    getAuthId: mockGetAuthId
+  }))
+}));
 
-jest.mock("../../services/transaction-service", () => {
-  return {
-    TransactionService: jest.fn(() => ({
-      getTransactions: mockGetTransactions
-    }))
-  };
-});
+jest.mock("../../services/transaction-service", () => ({
+  TransactionService: jest.fn(() => ({
+    getTransactions: mockGetTransactions
+  }))
+}));
 
-jest.mock("../../utils/response-body-builder", () => {
-  return { responseBodyBuilder: jest.fn(() => "mock-body-built-response") };
-});
+jest.mock("../../utils/response-body-builder", () => ({
+  responseBodyBuilder: jest.fn(() => "mock-body-built-response")
+}));
 
 describe("handlers/transactions-get", () => {
-  let callback: Function;
-  let event: object;
+  let callback: Callback<APIGatewayProxyResult>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let event: any;
 
   beforeEach(async () => {
     callback = jest.fn();
