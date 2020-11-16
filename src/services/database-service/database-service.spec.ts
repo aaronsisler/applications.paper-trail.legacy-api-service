@@ -24,6 +24,8 @@ jest.mock("../../utils/error-logger", () => ({
 }));
 
 describe("DatabaseService", () => {
+  const mockTable = "MOCK_DATABASE_TABLE";
+  const mockKey = { mockKey: "mock-key-value" };
   let databaseService: DatabaseService;
 
   beforeEach(() => {
@@ -56,18 +58,13 @@ describe("DatabaseService", () => {
 
     describe("and the call is successful", () => {
       beforeEach(async () => {
-        returnedItem = await databaseService.read(
-          "mock-string-key",
-          "mock-string",
-          "userDetails"
-        );
+        returnedItem = await databaseService.read(mockTable, mockKey);
       });
 
       it("should have called the database with correct params", async () => {
         expect(mockGet).toHaveBeenCalledWith({
-          Key: { "mock-string-key": "mock-string" },
-          TableName: "mock-ddb-table",
-          ProjectionExpression: "userDetails"
+          Key: { mockKey: "mock-key-value" },
+          TableName: "MOCK_DATABASE_TABLE"
         });
       });
 
@@ -80,18 +77,13 @@ describe("DatabaseService", () => {
       beforeEach(async () => {
         mockDDBItem = jest.fn().mockRejectedValue("mock-error");
 
-        returnedItem = await databaseService.read(
-          "mock-string-key",
-          "mock-string",
-          "userDetails"
-        );
+        returnedItem = await databaseService.read(mockTable, mockKey);
       });
 
       it("should have called the database with correct params", async () => {
         expect(mockGet).toHaveBeenCalledWith({
-          Key: { "mock-string-key": "mock-string" },
-          TableName: "mock-ddb-table",
-          ProjectionExpression: "userDetails"
+          Key: { mockKey: "mock-key-value" },
+          TableName: "MOCK_DATABASE_TABLE"
         });
       });
 

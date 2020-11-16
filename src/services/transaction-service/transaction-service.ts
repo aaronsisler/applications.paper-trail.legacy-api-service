@@ -1,3 +1,4 @@
+import { DATABASE_TABLE_TRANSACTIONS } from "../../config";
 import { DatabaseService } from "../database-service";
 import { Transaction } from "../../models/transaction";
 import { errorLogger } from "../../utils/error-logger";
@@ -12,10 +13,10 @@ class TransactionService {
   async getTransactions(userId: string): Promise<Transaction[]> {
     let transactions: Transaction[] = [];
     try {
+      const key = { userId };
       const { transactions: rawTransactions } = await this.databaseService.read(
-        "userId",
-        userId,
-        `transactions`
+        DATABASE_TABLE_TRANSACTIONS,
+        key
       );
 
       transactions = this.mapRawTransactions(rawTransactions);

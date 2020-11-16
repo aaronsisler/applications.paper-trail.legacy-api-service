@@ -6,6 +6,10 @@ import { Transaction } from "../../models/transaction";
 
 let mockRead: jest.Mock;
 
+jest.mock("../../config", () => ({
+  DATABASE_TABLE_TRANSACTIONS: "mock-transactions-table"
+}));
+
 jest.mock("../../services/database-service", () => ({
   DatabaseService: jest.fn().mockImplementation(() => ({
     read: mockRead
@@ -17,6 +21,7 @@ jest.mock("../../utils/error-logger", () => ({
 }));
 
 describe("services/TransactionService", () => {
+  const mockKey = { userId: "mock-user-id" };
   let transactionService: TransactionService;
   let returnedTransactions: Transaction[];
 
@@ -45,9 +50,8 @@ describe("services/TransactionService", () => {
 
       it("should read from the database using the correct parameters", () => {
         expect(mockRead).toHaveBeenCalledWith(
-          "userId",
-          "mock-user-id",
-          "transactions"
+          "mock-transactions-table",
+          mockKey
         );
       });
 
@@ -69,9 +73,8 @@ describe("services/TransactionService", () => {
 
       it("should read from the database using the correct parameters", () => {
         expect(mockRead).toHaveBeenCalledWith(
-          "userId",
-          "mock-user-id",
-          "transactions"
+          "mock-transactions-table",
+          mockKey
         );
       });
 

@@ -6,6 +6,8 @@ import { errorLogger } from "../../utils/error-logger";
 
 let mockRead: jest.Mock;
 
+jest.mock("../../config", () => ({ DATABASE_TABLE_USERS: "mock-users-table" }));
+
 jest.mock("../../utils/error-logger", () => ({
   errorLogger: jest.fn().mockReturnThis()
 }));
@@ -17,6 +19,7 @@ jest.mock("../../services/database-service", () => ({
 }));
 
 describe("services/UserService", () => {
+  const mockKey = { userId: "mock-user-id" };
   let userService: UserService;
   let returnedUser: User;
 
@@ -42,11 +45,7 @@ describe("services/UserService", () => {
       });
 
       it("should call the database service with correct parameters", () => {
-        expect(mockRead).toHaveBeenCalledWith(
-          "userId",
-          "mock-user-id",
-          "userDetails"
-        );
+        expect(mockRead).toHaveBeenCalledWith("mock-users-table", mockKey);
       });
 
       it("should return the correct user", () => {
@@ -64,11 +63,7 @@ describe("services/UserService", () => {
       });
 
       it("should call the database service with correct parameters", () => {
-        expect(mockRead).toHaveBeenCalledWith(
-          "userId",
-          "mock-user-id",
-          "userDetails"
-        );
+        expect(mockRead).toHaveBeenCalledWith("mock-users-table", mockKey);
       });
 
       it("should return the correct user", () => {
