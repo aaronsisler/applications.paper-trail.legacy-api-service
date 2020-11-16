@@ -5,6 +5,7 @@ import { DatabaseService } from "../services/database-service";
 import { TransactionService } from "../services/transaction-service";
 import { Transaction } from "../models/transaction";
 import { User } from "../models/user";
+import { DATABASE_TABLE_TRANSACTIONS } from "../config";
 
 const app = express();
 const port = process.env.PORT || "9001";
@@ -12,9 +13,15 @@ const userId = "101389202411803829037";
 
 app.get("/test", async (req, res) => {
   const databaseService = new DatabaseService();
-  // await databaseService.create("userId", "123");
-
-  return res.status(200).json("Worked");
+  const transactionId = "789";
+  const key = { userId, transactionId };
+  const transaction = { amount: 789.21 };
+  try {
+    await databaseService.create(DATABASE_TABLE_TRANSACTIONS, key, transaction);
+    return res.status(200).json("Worked");
+  } catch (error) {
+    return res.status(500).json("Failure");
+  }
 });
 
 app.get("/health", (_req, res) => {
