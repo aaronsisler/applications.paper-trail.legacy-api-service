@@ -34,8 +34,8 @@ describe("services/AuthService", () => {
     expect(typeof authService).toEqual("object");
   });
 
-  describe("when getAuthId is invoked", () => {
-    describe("and headers do NOT contain correct token header", () => {
+  describe("when an authentication id is requested", () => {
+    describe("and headers do NOT contain correct header", () => {
       beforeEach(async () => {
         authService = new AuthService();
         returnedAuthId = await authService.getAuthId({
@@ -43,7 +43,7 @@ describe("services/AuthService", () => {
         });
       });
 
-      it("should return the correct user", () => {
+      it("should return correctly", () => {
         expect(returnedAuthId).toEqual(undefined);
       });
 
@@ -64,7 +64,7 @@ describe("services/AuthService", () => {
           });
         });
 
-        it("should return the correct user", () => {
+        it("should return correctly", () => {
           expect(returnedAuthId).toEqual(undefined);
         });
 
@@ -84,7 +84,7 @@ describe("services/AuthService", () => {
           });
         });
 
-        it("should return the correct user", () => {
+        it("should return correctly", () => {
           expect(returnedAuthId).toEqual(undefined);
         });
 
@@ -115,7 +115,7 @@ describe("services/AuthService", () => {
             );
           });
 
-          it("should return the correct user", () => {
+          it("should return correctly", () => {
             expect(returnedAuthId).toEqual("mock-sub");
           });
         });
@@ -138,7 +138,7 @@ describe("services/AuthService", () => {
             );
           });
 
-          it("should return the correct user", () => {
+          it("should return correctly", () => {
             expect(returnedAuthId).toEqual(undefined);
           });
 
