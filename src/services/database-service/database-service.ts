@@ -1,4 +1,5 @@
 import aws, { DynamoDB } from "aws-sdk";
+import { KeyValuePair } from "../../models/key-value-pair";
 
 import { DatabaseItem } from "../../models/database-item";
 import { errorLogger } from "../../utils/error-logger";
@@ -47,6 +48,33 @@ class DatabaseService {
     }
 
     return undefined;
+  }
+
+  async readTrans(
+    table: string,
+    filterCondition: KeyValuePair
+  ): Promise<unknown> {
+    try {
+      const params = {
+        TableName: table,
+        KeyConditionExpression: "#keyName = :keyValue",
+        ExpressionAttributeNames: {
+          "#keyName": filterCondition.getKey()
+        },
+        ExpressionAttributeValues: {
+          ":keyValue": filterCondition.getValue()
+        }
+      };
+
+      const { Items: items } = await this.documentClient
+        .query(params)
+        .promise();
+
+      return items;
+    } catch (error) {
+      errorLogger("DatabaseService", error);
+      throw new Error("Transactions not found");
+    }
   }
 }
 

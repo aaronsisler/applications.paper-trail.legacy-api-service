@@ -23,7 +23,7 @@ const userGet: APIGatewayProxyHandler = async (
     const authService = new AuthService();
     authId = await authService.getAuthId(event);
   } catch (error) {
-    errorLogger("Handler/UserGet", error);
+    errorLogger("Handler/User:Get", error);
     const response: HandlerResponse = responseBodyBuilder({
       statusCode: 401,
       body: "Unauthorized"
@@ -44,6 +44,7 @@ const userGet: APIGatewayProxyHandler = async (
 
     callback(null, response);
   } catch (error) {
+    errorLogger("Handler/User:Get", error);
     const response: HandlerResponse = responseBodyBuilder({
       statusCode: 204,
       body: undefined

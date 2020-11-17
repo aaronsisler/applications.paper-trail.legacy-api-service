@@ -1,7 +1,8 @@
 import { DATABASE_TABLE_TRANSACTIONS } from "../../config";
-import { DatabaseService } from "../database-service";
 import { Transaction } from "../../models/transaction";
+import { DatabaseService } from "../database-service";
 import { errorLogger } from "../../utils/error-logger";
+import { KeyValuePair } from "../../models/key-value-pair";
 
 class TransactionService {
   private databaseService: DatabaseService;
@@ -13,10 +14,10 @@ class TransactionService {
   async getTransactions(userId: string): Promise<Transaction[]> {
     let transactions: Transaction[] = [];
     try {
-      const key = { userId };
-      const { transactions: rawTransactions } = await this.databaseService.read(
+      const filterCondition = new KeyValuePair("userId", userId);
+      const rawTransactions: unknown = await this.databaseService.readTrans(
         DATABASE_TABLE_TRANSACTIONS,
-        key
+        filterCondition
       );
 
       transactions = this.mapRawTransactions(rawTransactions);
@@ -27,11 +28,9 @@ class TransactionService {
     return transactions;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private mapRawTransactions = (rawTransactions: any): Transaction[] => {
-    const transactions: Transaction[] = Object.keys(rawTransactions).map(
-      (key: string) =>
-        new Transaction({ transId: key, ...rawTransactions[key] })
+    const transactions: Transaction[] = rawTransactions.map(
+      (rawTransaction: Transaction) => new Transaction({ ...rawTransaction })
     );
 
     return transactions;

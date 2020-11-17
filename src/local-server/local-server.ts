@@ -33,7 +33,7 @@ app.get("/health", (_req, res) => {
 
 app.get("/user", async (req, res) => {
   const userService = new UserService();
-  const user: User = await userService.getUserDetails(userId);
+  const user: User = await userService.getUser(userId);
 
   return res.status(200).json(user);
 });
@@ -52,16 +52,9 @@ app.get("/auth", async (req, res) => {
   const authService: AuthService = new AuthService();
   try {
     authId = await authService.getAuthId(req);
+    return res.status(200).json(authId);
   } catch (error) {
     return res.status(401).send();
-  }
-
-  const userService: UserService = new UserService();
-  try {
-    const user = await userService.getUserDetails(authId);
-    return res.status(200).json(user);
-  } catch (error) {
-    return res.status(404).send();
   }
 });
 
