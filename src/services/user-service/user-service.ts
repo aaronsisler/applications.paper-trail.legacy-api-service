@@ -21,7 +21,7 @@ class UserService {
       return { userId, ...rawUser } as User;
     } catch (error) {
       errorLogger(UserService.name, error);
-      throw new Error();
+      throw new Error("User not found");
     }
   }
 }

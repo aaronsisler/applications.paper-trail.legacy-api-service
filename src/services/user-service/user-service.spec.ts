@@ -58,16 +58,20 @@ describe("services/UserService", () => {
 
       beforeEach(async () => {
         mockRead = jest.fn().mockRejectedValue(expectedError);
-        userService = new UserService();
-        returnedUser = await userService.getUserDetails("mock-user-id");
+        try {
+          userService = new UserService();
+          await userService.getUserDetails("mock-user-id");
+        } catch (error) {} // eslint-disable-line no-empty
       });
 
       it("should call the database service with correct parameters", () => {
         expect(mockRead).toHaveBeenCalledWith("mock-users-table", mockKey);
       });
 
-      it("should return the correct user", () => {
-        expect(returnedUser).toEqual(undefined);
+      it("should throw an error", async () => {
+        await expect(
+          userService.getUserDetails("mock-user-id")
+        ).rejects.toThrowError("User not found");
       });
 
       it("should log correct messages to the console", () => {

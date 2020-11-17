@@ -63,8 +63,8 @@ describe("DatabaseService", () => {
 
       it("should have called the database with correct params", async () => {
         expect(mockGet).toHaveBeenCalledWith({
-          Key: { mockKey: "mock-key-value" },
-          TableName: "MOCK_DATABASE_TABLE"
+          TableName: "MOCK_DATABASE_TABLE",
+          Key: { mockKey: "mock-key-value" }
         });
       });
 
@@ -82,14 +82,15 @@ describe("DatabaseService", () => {
 
       it("should have called the database with correct params", async () => {
         expect(mockGet).toHaveBeenCalledWith({
-          Key: { mockKey: "mock-key-value" },
-          TableName: "MOCK_DATABASE_TABLE"
+          TableName: "MOCK_DATABASE_TABLE",
+          Key: { mockKey: "mock-key-value" }
         });
       });
 
       it("should return the correct item", () => {
         expect(returnedItem).toEqual(undefined);
       });
+
       it("should log correct messages to the console", () => {
         expect(errorLogger).toHaveBeenCalledWith(
           "DatabaseService",
