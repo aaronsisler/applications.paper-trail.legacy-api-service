@@ -1,5 +1,4 @@
-// import axios from "axios";
-// import { HandlerRequest } from "../../models/handler-request";
+import axios from "axios";
 import { HandlerRequest } from "../../models/handler-request";
 import { AuthService } from "./index";
 import { errorLogger } from "../../utils/error-logger";
@@ -17,6 +16,7 @@ jest.mock("../../utils/error-logger", () => ({
 
 describe("services/AuthService", () => {
   let authService: AuthService;
+  let returnedAuthId: string;
 
   beforeEach(() => {
     authService = new AuthService();
@@ -33,20 +33,57 @@ describe("services/AuthService", () => {
 
   describe("when an authentication id is requested", () => {
     describe("and the request is valid", () => {
+      const mockRequest: HandlerRequest = {
+        headers: { authorization: "mock-token-header mock-token" }
+      };
+
       describe("and the validation request is successful", () => {
-        it("should call the validation endpoint with correct parameter", () => {});
+        beforeEach(async () => {
+          axios.get = jest
+            .fn()
+            .mockResolvedValue({ data: { sub: "mock-sub" } });
+          returnedAuthId = await authService.getAuthId(mockRequest);
+        });
 
-        it("should return correctly", () => {});
+        it("should call the validation endpoint with correct parameter", () => {
+          expect(axios.get).toHaveBeenCalledWith("mock-token-validation-url", {
+            params: { id_token: "mock-token" }
+          });
+        });
 
-        it("should log error messages correctly", () => {});
+        it("should return correctly", () => {
+          expect(returnedAuthId).toEqual("mock-sub");
+        });
       });
 
       describe("and the validation request is NOT successful", () => {
-        it("should call the validation endpoint with correct parameter", () => {});
+        const expectedError = "mock-error";
 
-        it("should throw an error", () => {});
+        beforeEach(async () => {
+          axios.get = jest.fn().mockRejectedValue(expectedError);
+          try {
+            await authService.getAuthId(mockRequest);
+          } catch (error) {} // eslint-disable-line no-empty
+        });
 
-        it("should log error messages correctly", () => {});
+        it("should call the validation endpoint with correct parameter", () => {
+          expect(axios.get).toHaveBeenCalledWith("mock-token-validation-url", {
+            params: { id_token: "mock-token" }
+          });
+        });
+
+        it("should throw an error", async () => {
+          await expect(authService.getAuthId(mockRequest)).rejects.toThrowError(
+            "OAuth token not valid"
+          );
+        });
+
+        it("should log error messages correctly", () => {
+          expect(errorLogger).toHaveBeenCalledWith(
+            "AuthService",
+            "OAuth token not valid"
+          );
+        });
       });
     });
 
