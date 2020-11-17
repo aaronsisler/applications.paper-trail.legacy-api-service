@@ -12,21 +12,17 @@ class UserService {
   }
 
   async getUserDetails(userId: string): Promise<User> {
-    let user: User;
     try {
       const key = { userId };
-      const {
-        userDetails: rawUser
-      }: DatabaseItem = await this.databaseService.read(
+      const rawUser: DatabaseItem = await this.databaseService.read(
         DATABASE_TABLE_USERS,
         key
       );
-      return { userId, ...(rawUser as User) };
+      return { userId, ...rawUser } as User;
     } catch (error) {
       errorLogger(UserService.name, error);
+      throw new Error();
     }
-
-    return user;
   }
 }
 

@@ -1,8 +1,9 @@
 import express from "express";
+import { AuthService } from "../services/auth-service";
 import { HealthService } from "../services/health-service";
-import { UserService } from "../services/user-service";
 import { DatabaseService } from "../services/database-service";
 import { TransactionService } from "../services/transaction-service";
+import { UserService } from "../services/user-service";
 import { Transaction } from "../models/transaction";
 import { User } from "../models/user";
 import { DATABASE_TABLE_TRANSACTIONS } from "../config";
@@ -44,6 +45,24 @@ app.get("/transactions", async (req, res) => {
   );
 
   return res.status(200).json(transactions);
+});
+
+app.get("/auth", async (req, res) => {
+  let authId: string;
+  const authService: AuthService = new AuthService();
+  try {
+    authId = await authService.getAuthId(req);
+  } catch (error) {
+    return res.status(401).send();
+  }
+
+  const userService: UserService = new UserService();
+  try {
+    const user = await userService.getUserDetails(authId);
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(404).send();
+  }
 });
 
 app
