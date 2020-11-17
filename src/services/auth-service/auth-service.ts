@@ -9,7 +9,7 @@ class AuthService {
     let token: string;
 
     try {
-      authHeader = authRequest.headers.authorization;
+      authHeader = authRequest.headers.Authorization as string;
       [, token] = authHeader.split(" ");
     } catch (error) {
       errorLogger("AuthService", "No token found in headers");

@@ -34,7 +34,7 @@ describe("services/AuthService", () => {
   describe("when an authentication id is requested", () => {
     describe("and the request is valid", () => {
       const mockRequest: HandlerRequest = {
-        headers: { authorization: "mock-token-header mock-token" }
+        headers: { Authorization: "mock-token-header mock-token" }
       };
 
       describe("and the validation request is successful", () => {
@@ -111,7 +111,7 @@ describe("services/AuthService", () => {
 
       describe("and authentication header is NOT valid", () => {
         const mockRequest: HandlerRequest = {
-          headers: { authorization: "mock-header-empty-token " } // Trailing space is correct here
+          headers: { Authorization: "mock-header-empty-token " } // Trailing space is correct here
         };
 
         it("should throw an error", async () => {
