@@ -91,7 +91,7 @@ describe("DatabaseService", () => {
         expect(returnedItem).toEqual(undefined);
       });
 
-      it("should log correct messages to the console", () => {
+      it("should log error messages correctly", () => {
         expect(errorLogger).toHaveBeenCalledWith(
           "DatabaseService",
           "mock-error"

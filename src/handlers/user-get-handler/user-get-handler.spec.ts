@@ -1,9 +1,10 @@
 import { APIGatewayProxyResult, Callback } from "aws-lambda";
 import { handler } from "./index";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
+import { errorLogger } from "../../utils/error-logger";
 
 let mockGetAuthId: jest.Mock;
-let mockGetUserDetails: jest.Mock;
+let mockGetUser: jest.Mock;
 
 jest.mock("../../services/auth-service", () => ({
   AuthService: jest.fn(() => ({
@@ -13,12 +14,16 @@ jest.mock("../../services/auth-service", () => ({
 
 jest.mock("../../services/user-service", () => ({
   UserService: jest.fn(() => ({
-    getUserDetails: mockGetUserDetails
+    getUser: mockGetUser
   }))
 }));
 
 jest.mock("../../utils/response-body-builder", () => ({
   responseBodyBuilder: jest.fn(() => "mock-body-built-response")
+}));
+
+jest.mock("../../utils/error-logger", () => ({
+  errorLogger: jest.fn().mockReturnThis()
 }));
 
 describe("handlers/user-get", () => {
@@ -30,94 +35,92 @@ describe("handlers/user-get", () => {
     callback = jest.fn();
   });
 
-  describe("when authentication is NOT successful", () => {
-    const expectedResponse = {
-      statusCode: 401,
-      body: "Unauthorized"
-    };
+  describe("when a user is requested", () => {
+    describe("and when authentication is NOT successful", () => {
+      const expectedResponse = {
+        statusCode: 401,
+        body: "Unauthorized"
+      };
 
-    beforeEach(async () => {
-      mockGetAuthId = jest.fn().mockResolvedValue(undefined);
-      await handler(event, undefined, callback);
-    });
-
-    it("should call the auth service with correct event", () => {
-      expect(mockGetAuthId).toHaveBeenCalledWith(event);
-    });
-
-    it("should call the response body builder with the correct parameters", () => {
-      expect(responseBodyBuilder).toHaveBeenCalledWith(expectedResponse);
-    });
-
-    it("should invoke the callback with the correct response", () => {
-      expect(callback).toHaveBeenCalledWith(null, "mock-body-built-response");
-    });
-  });
-
-  describe("when authentication is successful", () => {
-    beforeEach(() => {
-      mockGetAuthId = jest.fn().mockResolvedValue("mock-auth-id");
-      mockGetUserDetails = jest.fn();
-    });
-
-    it("should call user service with correct arguments", async () => {
-      await handler(event, undefined, callback);
-
-      expect(mockGetUserDetails).toHaveBeenCalledWith("mock-auth-id");
-    });
-
-    describe("when fetched user is found", () => {
       beforeEach(async () => {
-        mockGetUserDetails = jest.fn().mockResolvedValue("mock-user");
+        mockGetAuthId = jest.fn().mockRejectedValue("mock-error");
         await handler(event, undefined, callback);
       });
 
-      it("should call the response body builder with the correct parameters", () => {
-        expect(responseBodyBuilder).toHaveBeenCalledWith({
-          statusCode: 200,
-          body: "mock-user"
-        });
+      it("should verify the request correctly", () => {
+        expect(mockGetAuthId).toHaveBeenCalledWith(event);
       });
 
-      it("should invoke the callback with the correct response", () => {
+      it("should log error messages correctly", () => {
+        expect(errorLogger).toHaveBeenCalledWith(
+          "Handler/UserGet",
+          "mock-error"
+        );
+      });
+
+      it("should return the correct response", () => {
+        expect(responseBodyBuilder).toHaveBeenCalledWith(expectedResponse);
+      });
+
+      it("should invoke the callback correctly", () => {
         expect(callback).toHaveBeenCalledWith(null, "mock-body-built-response");
       });
     });
 
-    describe("when fetched user is NOT found", () => {
+    describe("and when authentication is successful", () => {
       beforeEach(async () => {
-        mockGetUserDetails = jest.fn().mockResolvedValue(undefined);
-        await handler(event, undefined, callback);
+        mockGetAuthId = jest.fn().mockResolvedValue("mock-auth-id");
       });
 
-      it("should call the response body builder with the correct parameters", () => {
-        expect(responseBodyBuilder).toHaveBeenCalledWith({
-          statusCode: 204,
-          body: undefined
+      describe("and a user is found", () => {
+        beforeEach(async () => {
+          mockGetUser = jest.fn().mockResolvedValue("mock-user");
+          await handler(event, undefined, callback);
+        });
+
+        it("should have fetched user correctly", async () => {
+          expect(mockGetUser).toHaveBeenCalledWith("mock-auth-id");
+        });
+
+        it("should return the correct response", () => {
+          expect(responseBodyBuilder).toHaveBeenCalledWith({
+            statusCode: 200,
+            body: "mock-user"
+          });
+        });
+
+        it("should invoke the callback correctly", () => {
+          expect(callback).toHaveBeenCalledWith(
+            null,
+            "mock-body-built-response"
+          );
         });
       });
 
-      it("should invoke the callback with the correct response", () => {
-        expect(callback).toHaveBeenCalledWith(null, "mock-body-built-response");
+      describe("and a user is NOT found", () => {
+        beforeEach(async () => {
+          mockGetUser = jest.fn().mockRejectedValue("user-not-found");
+          await handler(event, undefined, callback);
+        });
+
+        it("should have fetched user correctly", async () => {
+          expect(mockGetUser).toHaveBeenCalledWith("mock-auth-id");
+        });
+
+        it("should return the correct response", () => {
+          expect(responseBodyBuilder).toHaveBeenCalledWith({
+            statusCode: 204,
+            body: undefined
+          });
+        });
+
+        it("should invoke the callback correctly", () => {
+          expect(callback).toHaveBeenCalledWith(
+            null,
+            "mock-body-built-response"
+          );
+        });
       });
-    });
-  });
-
-  describe("when an error is thrown", () => {
-    beforeEach(async () => {
-      mockGetAuthId = jest.fn().mockRejectedValue({});
-      await handler(event, undefined, callback);
-    });
-
-    it("should call response body builder with correct arguments", () => {
-      expect(responseBodyBuilder).toHaveBeenCalledWith({
-        statusCode: 500,
-        body: "Error: Something went wrong"
-      });
-    });
-
-    it("should invoke callback with correct arguments", () => {
-      expect(callback).toHaveBeenCalledWith(null, "mock-body-built-response");
     });
   });
 });

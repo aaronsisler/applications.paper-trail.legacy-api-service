@@ -11,7 +11,7 @@ class UserService {
     this.databaseService = new DatabaseService();
   }
 
-  async getUserDetails(userId: string): Promise<User> {
+  async getUser(userId: string): Promise<User> {
     try {
       const key = { userId };
       const rawUser: DatabaseItem = await this.databaseService.read(
