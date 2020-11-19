@@ -15,7 +15,7 @@ class TransactionService {
     let transactions: Transaction[] = [];
     try {
       const filterCondition = new KeyValuePair("userId", userId);
-      const rawTransactions: unknown = await this.databaseService.readTrans(
+      const rawTransactions: unknown = await this.databaseService.read(
         DATABASE_TABLE_TRANSACTIONS,
         filterCondition
       );

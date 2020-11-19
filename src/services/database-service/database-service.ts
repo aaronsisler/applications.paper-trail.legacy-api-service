@@ -1,7 +1,8 @@
 import aws, { DynamoDB } from "aws-sdk";
-import { KeyValuePair } from "../../models/key-value-pair";
+import { ItemList } from "aws-sdk/clients/dynamodb";
 
 import { DatabaseItem } from "../../models/database-item";
+import { KeyValuePair } from "../../models/key-value-pair";
 import { errorLogger } from "../../utils/error-logger";
 
 class DatabaseService {
@@ -30,7 +31,7 @@ class DatabaseService {
     }
   }
 
-  async read(
+  async readOld(
     table: string,
     key: Record<string, string>
   ): Promise<DatabaseItem> {
@@ -50,10 +51,7 @@ class DatabaseService {
     return undefined;
   }
 
-  async readTrans(
-    table: string,
-    filterCondition: KeyValuePair
-  ): Promise<unknown> {
+  async read(table: string, filterCondition: KeyValuePair): Promise<ItemList> {
     try {
       const params = {
         TableName: table,

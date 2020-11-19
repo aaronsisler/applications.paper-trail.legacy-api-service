@@ -32,10 +32,13 @@ app.get("/health", (_req, res) => {
 });
 
 app.get("/user", async (req, res) => {
-  const userService = new UserService();
-  const user: User = await userService.getUser(userId);
-
-  return res.status(200).json(user);
+  try {
+    const userService = new UserService();
+    const user: User = await userService.getUser(userId);
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(204).send();
+  }
 });
 
 app.get("/transactions", async (req, res) => {
