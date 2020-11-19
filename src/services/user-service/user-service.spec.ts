@@ -1,6 +1,7 @@
 import { UserService } from "./index";
 import { rawUserDetails } from "../../mocks/raw-user-details";
 import { userDetails } from "../../mocks/user-details";
+import { KeyValuePair } from "../../models/key-value-pair";
 import { User } from "../../models/user";
 import { errorLogger } from "../../utils/error-logger";
 
@@ -19,7 +20,7 @@ jest.mock("../../services/database-service", () => ({
 }));
 
 describe("services/UserService", () => {
-  const mockKey = { userId: "mock-user-id" };
+  const mockKeyValuePair = new KeyValuePair("userId", "mock-user-id");
   let userService: UserService;
   let returnedUser: User;
 
@@ -39,13 +40,16 @@ describe("services/UserService", () => {
   describe("when user details are requested", () => {
     describe("and is successful", () => {
       beforeEach(async () => {
-        mockRead = jest.fn().mockResolvedValue(rawUserDetails);
+        mockRead = jest.fn().mockResolvedValue([rawUserDetails]);
         userService = new UserService();
         returnedUser = await userService.getUser("mock-user-id");
       });
 
       it("should call the database service with correct parameters", () => {
-        expect(mockRead).toHaveBeenCalledWith("mock-users-table", mockKey);
+        expect(mockRead).toHaveBeenCalledWith(
+          "mock-users-table",
+          mockKeyValuePair
+        );
       });
 
       it("should return the correct user", () => {
@@ -65,7 +69,10 @@ describe("services/UserService", () => {
       });
 
       it("should call the database service with correct parameters", () => {
-        expect(mockRead).toHaveBeenCalledWith("mock-users-table", mockKey);
+        expect(mockRead).toHaveBeenCalledWith(
+          "mock-users-table",
+          mockKeyValuePair
+        );
       });
 
       it("should throw an error", async () => {

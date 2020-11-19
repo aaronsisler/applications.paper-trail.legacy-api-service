@@ -1,8 +1,9 @@
 import { TransactionService } from "./index";
 import { rawTransactions } from "../../mocks/raw-transactions";
 import { transactions } from "../../mocks/transactions";
-import { errorLogger } from "../../utils/error-logger";
+import { KeyValuePair } from "../../models/key-value-pair";
 import { Transaction } from "../../models/transaction";
+import { errorLogger } from "../../utils/error-logger";
 
 let mockRead: jest.Mock;
 
@@ -21,7 +22,7 @@ jest.mock("../../utils/error-logger", () => ({
 }));
 
 describe("services/TransactionService", () => {
-  const mockKey = { userId: "mock-user-id" };
+  const mockKeyValuePair = new KeyValuePair("userId", "mock-user-id");
   let transactionService: TransactionService;
   let returnedTransactions: Transaction[];
 
@@ -51,7 +52,7 @@ describe("services/TransactionService", () => {
       it("should read from the database using the correct parameters", () => {
         expect(mockRead).toHaveBeenCalledWith(
           "mock-transactions-table",
-          mockKey
+          mockKeyValuePair
         );
       });
 
@@ -74,7 +75,7 @@ describe("services/TransactionService", () => {
       it("should read from the database using the correct parameters", () => {
         expect(mockRead).toHaveBeenCalledWith(
           "mock-transactions-table",
-          mockKey
+          mockKeyValuePair
         );
       });
 
