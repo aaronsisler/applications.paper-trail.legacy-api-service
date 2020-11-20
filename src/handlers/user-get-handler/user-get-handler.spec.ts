@@ -53,7 +53,7 @@ describe("handlers/user-get", () => {
 
       it("should log error messages correctly", () => {
         expect(errorLogger).toHaveBeenCalledWith(
-          "Handler/UserGet",
+          "Handler/User:Get",
           "mock-error"
         );
       });

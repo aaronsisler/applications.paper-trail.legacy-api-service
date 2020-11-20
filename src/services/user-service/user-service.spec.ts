@@ -39,21 +39,46 @@ describe("services/UserService", () => {
 
   describe("when user details are requested", () => {
     describe("and is successful", () => {
-      beforeEach(async () => {
-        mockRead = jest.fn().mockResolvedValue([rawUserDetails]);
-        userService = new UserService();
-        returnedUser = await userService.getUser("mock-user-id");
-      });
+      describe("and a user is NOT found", () => {
+        beforeEach(async () => {
+          mockRead = jest.fn().mockResolvedValue([]);
+          userService = new UserService();
+          try {
+            userService = new UserService();
+            await userService.getUser("mock-user-id");
+          } catch (error) {} // eslint-disable-line no-empty
+        });
 
-      it("should call the database service with correct parameters", () => {
-        expect(mockRead).toHaveBeenCalledWith(
-          "mock-users-table",
-          mockKeyValuePair
-        );
-      });
+        it("should call the database service with correct parameters", () => {
+          expect(mockRead).toHaveBeenCalledWith(
+            "mock-users-table",
+            mockKeyValuePair
+          );
+        });
 
-      it("should return the correct user", () => {
-        expect(returnedUser).toEqual(userDetails);
+        it("should throw an error", async () => {
+          await expect(
+            userService.getUser("mock-user-id")
+          ).rejects.toThrowError("User not found");
+        });
+      });
+      describe("and a user is found", () => {
+        beforeEach(async () => {
+          mockRead = jest.fn().mockResolvedValue([rawUserDetails]);
+          userService = new UserService();
+          returnedUser = await userService.getUser("mock-user-id");
+        });
+
+        it("should call the database service with correct parameters", () => {
+          expect(mockRead).toHaveBeenCalledWith(
+            "mock-users-table",
+            mockKeyValuePair
+          );
+        });
+
+        it("should return the correct user", () => {
+          expect(returnedUser).toEqual(userDetails);
+        });
       });
     });
 

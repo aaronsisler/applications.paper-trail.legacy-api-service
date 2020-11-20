@@ -21,11 +21,15 @@ class TransactionService {
       );
 
       transactions = this.mapRawTransactions(rawTransactions);
+
+      if (transactions.length === 0) {
+        throw new Error("Transactions not found");
+      }
+      return transactions;
     } catch (error) {
       errorLogger(TransactionService.name, error);
+      throw new Error("Transactions not found");
     }
-
-    return transactions;
   }
 
   private mapRawTransactions = (rawTransactions: any): Transaction[] => {

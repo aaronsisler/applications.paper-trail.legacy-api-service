@@ -41,6 +41,9 @@ describe("services/TransactionService", () => {
 
   describe("when transactions are requested", () => {
     describe("and the call is successful", () => {
+      describe("and transactions are NOT found", () => {});
+      describe("and transactions are found", () => {});
+
       beforeEach(async () => {
         mockRead = jest.fn().mockResolvedValue(rawTransactions);
         transactionService = new TransactionService();
@@ -79,7 +82,7 @@ describe("services/TransactionService", () => {
         );
       });
 
-      it("should return the correct user", () => {
+      it("should return the correct transactions", () => {
         expect(returnedTransactions).toEqual([]);
       });
 
