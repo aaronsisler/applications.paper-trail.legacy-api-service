@@ -1,12 +1,13 @@
 import express from "express";
-import { AuthService } from "../services/auth-service";
-import { HealthService } from "../services/health-service";
-import { DatabaseService } from "../services/database-service";
-import { TransactionService } from "../services/transaction-service";
-import { UserService } from "../services/user-service";
+import { DATABASE_TABLE_TRANSACTIONS } from "../config";
+import { KeyValuePair } from "../models/key-value-pair";
 import { Transaction } from "../models/transaction";
 import { User } from "../models/user";
-import { DATABASE_TABLE_TRANSACTIONS } from "../config";
+import { AuthService } from "../services/auth-service";
+import { DatabaseService } from "../services/database-service";
+import { HealthService } from "../services/health-service";
+import { TransactionService } from "../services/transaction-service";
+import { UserService } from "../services/user-service";
 
 const app = express();
 const port = process.env.PORT || "9001";
@@ -14,13 +15,14 @@ const userId = "101389202411803829037";
 
 app.get("/test", async (req, res) => {
   const databaseService = new DatabaseService();
-  const transactionId = "789";
-  const key = { userId, transactionId };
-  const transaction = { amount: 789.21 };
+  const transactionId = "789012";
+  const key = new KeyValuePair("userId", userId);
+  const transaction = { transactionId, amount: 789.21, isPending: true };
   try {
     await databaseService.create(DATABASE_TABLE_TRANSACTIONS, key, transaction);
     return res.status(200).json("Worked");
   } catch (error) {
+    console.log(error);
     return res.status(500).json("Failure");
   }
 });
