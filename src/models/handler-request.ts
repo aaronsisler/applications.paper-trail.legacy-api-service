@@ -1,6 +1,6 @@
+import { IncomingHttpHeaders } from "http";
+
 export interface HandlerRequest {
-  headers: {
-    [key: string]: string;
-  };
+  headers: IncomingHttpHeaders;
   body?: string;
 }

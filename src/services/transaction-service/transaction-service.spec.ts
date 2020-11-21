@@ -1,10 +1,15 @@
 import { TransactionService } from "./index";
 import { rawTransactions } from "../../mocks/raw-transactions";
 import { transactions } from "../../mocks/transactions";
-import { errorLogger } from "../../utils/error-logger";
+import { KeyValuePair } from "../../models/key-value-pair";
 import { Transaction } from "../../models/transaction";
+import { errorLogger } from "../../utils/error-logger";
 
 let mockRead: jest.Mock;
+
+jest.mock("../../config", () => ({
+  DATABASE_TABLE_TRANSACTIONS: "mock-transactions-table"
+}));
 
 jest.mock("../../services/database-service", () => ({
   DatabaseService: jest.fn().mockImplementation(() => ({
@@ -17,6 +22,7 @@ jest.mock("../../utils/error-logger", () => ({
 }));
 
 describe("services/TransactionService", () => {
+  const mockKeyValuePair = new KeyValuePair("userId", "mock-user-id");
   let transactionService: TransactionService;
   let returnedTransactions: Transaction[];
 
@@ -35,24 +41,48 @@ describe("services/TransactionService", () => {
 
   describe("when transactions are requested", () => {
     describe("and the call is successful", () => {
-      beforeEach(async () => {
-        mockRead = jest.fn().mockResolvedValue(rawTransactions);
-        transactionService = new TransactionService();
-        returnedTransactions = await transactionService.getTransactions(
-          "mock-user-id"
-        );
+      describe("and transactions are NOT found", () => {
+        beforeEach(async () => {
+          mockRead = jest.fn().mockResolvedValue([]);
+          try {
+            transactionService = new TransactionService();
+            await transactionService.getTransactions("mock-user-id");
+          } catch (error) {} // eslint-disable-line no-empty
+        });
+
+        it("should read from the database using the correct parameters", () => {
+          expect(mockRead).toHaveBeenCalledWith(
+            "mock-transactions-table",
+            mockKeyValuePair
+          );
+        });
+
+        it("should throw an error", async () => {
+          await expect(
+            transactionService.getTransactions("mock-user-id")
+          ).rejects.toThrowError("Transactions not found");
+        });
       });
 
-      it("should read from the database using the correct parameters", () => {
-        expect(mockRead).toHaveBeenCalledWith(
-          "userId",
-          "mock-user-id",
-          "transactions"
-        );
-      });
+      describe("and transactions are found", () => {
+        beforeEach(async () => {
+          mockRead = jest.fn().mockResolvedValue(rawTransactions);
+          transactionService = new TransactionService();
+          returnedTransactions = await transactionService.getTransactions(
+            "mock-user-id"
+          );
+        });
 
-      it("should return the correct transactions", () => {
-        expect(returnedTransactions).toEqual(transactions);
+        it("should read from the database using the correct parameters", () => {
+          expect(mockRead).toHaveBeenCalledWith(
+            "mock-transactions-table",
+            mockKeyValuePair
+          );
+        });
+
+        it("should return the correct transactions", () => {
+          expect(returnedTransactions).toEqual(transactions);
+        });
       });
     });
 
@@ -61,22 +91,23 @@ describe("services/TransactionService", () => {
 
       beforeEach(async () => {
         mockRead = jest.fn().mockRejectedValue(expectedError);
-        transactionService = new TransactionService();
-        returnedTransactions = await transactionService.getTransactions(
-          "mock-user-id"
-        );
+        try {
+          transactionService = new TransactionService();
+          await transactionService.getTransactions("mock-user-id");
+        } catch (error) {} // eslint-disable-line no-empty
       });
 
       it("should read from the database using the correct parameters", () => {
         expect(mockRead).toHaveBeenCalledWith(
-          "userId",
-          "mock-user-id",
-          "transactions"
+          "mock-transactions-table",
+          mockKeyValuePair
         );
       });
 
-      it("should return the correct user", () => {
-        expect(returnedTransactions).toEqual([]);
+      it("should throw an error", async () => {
+        await expect(
+          transactionService.getTransactions("mock-user-id")
+        ).rejects.toThrowError("Transactions not found");
       });
 
       it("should log correct messages to the console", () => {

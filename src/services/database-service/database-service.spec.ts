@@ -1,10 +1,11 @@
 import aws from "aws-sdk";
+import { ItemList } from "aws-sdk/clients/dynamodb";
 import { DatabaseService } from "./index";
+import { KeyValuePair } from "../../models/key-value-pair";
 import { errorLogger } from "../../utils/error-logger";
-import { DatabaseItem } from "../../models/database-item";
 
 let mockDDBItem: jest.Mock;
-let mockGet: jest.Mock;
+let mockQuery: jest.Mock;
 
 jest.mock("../../config", () => ({ DATABASE_TABLE: "mock-ddb-table" }));
 
@@ -14,7 +15,7 @@ jest.mock("aws-sdk", () => ({
   },
   DynamoDB: {
     DocumentClient: jest.fn().mockImplementation(() => ({
-      get: mockGet
+      query: mockQuery
     }))
   }
 }));
@@ -23,12 +24,24 @@ jest.mock("../../utils/error-logger", () => ({
   errorLogger: jest.fn().mockReturnThis()
 }));
 
-describe("DatabaseService", () => {
+describe("Services/DatabaseService", () => {
+  const mockTable = "MOCK_DATABASE_TABLE";
+  const mockKey = new KeyValuePair("mock-key", "mock-key-value");
+  const expectedParams = {
+    TableName: "MOCK_DATABASE_TABLE",
+    KeyConditionExpression: "#keyName = :keyValue",
+    ExpressionAttributeNames: {
+      "#keyName": "mock-key"
+    },
+    ExpressionAttributeValues: {
+      ":keyValue": "mock-key-value"
+    }
+  };
   let databaseService: DatabaseService;
 
   beforeEach(() => {
-    mockDDBItem = jest.fn().mockResolvedValue({ Item: "mock-item" });
-    mockGet = jest.fn(() => ({ promise: mockDDBItem }));
+    mockDDBItem = jest.fn().mockResolvedValue({ Items: "mock-items" });
+    mockQuery = jest.fn(() => ({ promise: mockDDBItem }));
     databaseService = new DatabaseService();
   });
 
@@ -52,27 +65,19 @@ describe("DatabaseService", () => {
   });
 
   describe("when a record is requested", () => {
-    let returnedItem: DatabaseItem;
+    let returnedItem: ItemList;
 
     describe("and the call is successful", () => {
       beforeEach(async () => {
-        returnedItem = await databaseService.read(
-          "mock-string-key",
-          "mock-string",
-          "userDetails"
-        );
+        returnedItem = await databaseService.read(mockTable, mockKey);
       });
 
       it("should have called the database with correct params", async () => {
-        expect(mockGet).toHaveBeenCalledWith({
-          Key: { "mock-string-key": "mock-string" },
-          TableName: "mock-ddb-table",
-          ProjectionExpression: "userDetails"
-        });
+        expect(mockQuery).toHaveBeenCalledWith(expectedParams);
       });
 
       it("should return the correct item", () => {
-        expect(returnedItem).toEqual("mock-item");
+        expect(returnedItem).toEqual("mock-items");
       });
     });
 
@@ -80,25 +85,22 @@ describe("DatabaseService", () => {
       beforeEach(async () => {
         mockDDBItem = jest.fn().mockRejectedValue("mock-error");
 
-        returnedItem = await databaseService.read(
-          "mock-string-key",
-          "mock-string",
-          "userDetails"
-        );
+        try {
+          await databaseService.read(mockTable, mockKey);
+        } catch (error) {} // eslint-disable-line no-empty
       });
 
       it("should have called the database with correct params", async () => {
-        expect(mockGet).toHaveBeenCalledWith({
-          Key: { "mock-string-key": "mock-string" },
-          TableName: "mock-ddb-table",
-          ProjectionExpression: "userDetails"
-        });
+        expect(mockQuery).toHaveBeenCalledWith(expectedParams);
       });
 
-      it("should return the correct item", () => {
-        expect(returnedItem).toEqual(undefined);
+      it("should throw an error", async () => {
+        await expect(
+          databaseService.read(mockTable, mockKey)
+        ).rejects.toThrowError("Records not found");
       });
-      it("should log correct messages to the console", () => {
+
+      it("should log error messages correctly", () => {
         expect(errorLogger).toHaveBeenCalledWith(
           "DatabaseService",
           "mock-error"

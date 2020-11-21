@@ -1,5 +1,5 @@
 export class Transaction {
-  transId: string; // DDB unique generated ID
+  transactionId: string; // DDB unique generated ID
 
   sourceTransId: string; // transaction_id string Transaction Id from 3rd party API
 
@@ -18,7 +18,7 @@ export class Transaction {
   isPending: boolean; // pending boolean
 
   constructor(options?: {
-    transId: string;
+    transactionId: string;
     sourceTransId: string;
     amount: number;
     financialAccountId: string;
@@ -29,7 +29,7 @@ export class Transaction {
     isPending: boolean;
   }) {
     if (options) {
-      this.transId = options.transId;
+      this.transactionId = options.transactionId;
       this.sourceTransId = options.sourceTransId;
       this.amount = options.amount;
       this.financialAccountId = options.financialAccountId;

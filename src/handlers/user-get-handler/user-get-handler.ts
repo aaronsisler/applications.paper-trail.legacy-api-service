@@ -10,38 +10,44 @@ import { User } from "../../models/user";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 import { AuthService } from "../../services/auth-service";
 import { UserService } from "../../services/user-service";
+import { errorLogger } from "../../utils/error-logger";
 
 const userGet: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent,
   _context: Context,
   callback: Callback<APIGatewayProxyResult>
 ): Promise<APIGatewayProxyResult> => {
+  let authId: string;
+
   try {
     const authService = new AuthService();
-    const authId: string = await authService.getAuthId(event);
-    if (!authId) {
-      const response: HandlerResponse = responseBodyBuilder({
-        statusCode: 401,
-        body: "Unauthorized"
-      });
+    authId = await authService.getAuthId(event);
+  } catch (error) {
+    errorLogger("Handler/User:Get", error);
+    const response: HandlerResponse = responseBodyBuilder({
+      statusCode: 401,
+      body: "Unauthorized"
+    });
 
-      callback(null, response);
-      return;
-    }
+    callback(null, response);
+    return;
+  }
 
+  try {
     const userService = new UserService();
-    const user: User = await userService.getUserDetails(authId);
+    const user: User = await userService.getUser(authId);
 
     const response: HandlerResponse = responseBodyBuilder({
-      statusCode: user ? 200 : 204,
+      statusCode: 200,
       body: user
     });
 
     callback(null, response);
   } catch (error) {
+    errorLogger("Handler/User:Get", error);
     const response: HandlerResponse = responseBodyBuilder({
-      statusCode: 500,
-      body: "Error: Something went wrong"
+      statusCode: 204,
+      body: undefined
     });
 
     callback(null, response);

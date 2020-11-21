@@ -1,6 +1,9 @@
+import { ItemList } from "aws-sdk/clients/dynamodb";
+
+import { DATABASE_TABLE_USERS } from "../../config";
+import { KeyValuePair } from "../../models/key-value-pair";
 import { User } from "../../models/user";
 import { DatabaseService } from "../database-service";
-import { DatabaseItem } from "../../models/database-item";
 import { errorLogger } from "../../utils/error-logger";
 
 class UserService {
@@ -10,22 +13,24 @@ class UserService {
     this.databaseService = new DatabaseService();
   }
 
-  async getUserDetails(userId: string): Promise<User> {
-    let user: User;
+  async getUser(userId: string): Promise<User> {
     try {
-      const {
-        userDetails: rawUser
-      }: DatabaseItem = await this.databaseService.read(
-        "userId",
-        userId,
-        "userDetails"
+      const filterCondition = new KeyValuePair("userId", userId);
+      const rawUserList: ItemList = await this.databaseService.read(
+        DATABASE_TABLE_USERS,
+        filterCondition
       );
-      return { userId, ...(rawUser as User) };
+      const userList: User[] = (rawUserList as unknown) as User[];
+
+      if (userList.length === 0) {
+        throw new Error("User not found");
+      }
+
+      return userList[0];
     } catch (error) {
       errorLogger(UserService.name, error);
+      throw new Error("User not found");
     }
-
-    return user;
   }
 }
 

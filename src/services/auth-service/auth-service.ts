@@ -1,34 +1,32 @@
 import axios from "axios";
 import { HandlerRequest } from "../../models/handler-request";
 import { errorLogger } from "../../utils/error-logger";
-import { TOKEN_HEADER, TOKEN_VALIDATION_URL } from "../../config";
+import { TOKEN_VALIDATION_URL } from "../../config";
 
 class AuthService {
   async getAuthId(authRequest: HandlerRequest): Promise<string> {
     let authHeader: string;
     let token: string;
-    let authId: string;
 
     try {
-      authHeader = authRequest.headers[TOKEN_HEADER];
+      authHeader = authRequest.headers.Authorization as string;
       [, token] = authHeader.split(" ");
     } catch (error) {
       errorLogger("AuthService", "No token found in headers");
-      return authId;
+      throw new Error("No token found in headers");
     }
 
     if (!token) {
       errorLogger("AuthService", "Token cannot be empty");
-      return authId;
+      throw new Error("Token cannot be empty");
     }
 
     try {
-      authId = await this.extractTokenValue(token);
+      return await this.extractTokenValue(token);
     } catch (error) {
       errorLogger("AuthService", "OAuth token not valid");
+      throw new Error("OAuth token not valid");
     }
-
-    return authId;
   }
 
   private extractTokenValue = async (token: string) => {

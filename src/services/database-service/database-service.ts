@@ -1,81 +1,87 @@
 import aws, { DynamoDB } from "aws-sdk";
+import { ItemList } from "aws-sdk/clients/dynamodb";
 
-import { DatabaseValue } from "../../models/database-value";
-import { DatabaseItem } from "../../models/database-item";
-import { DATABASE_TABLE } from "../../config";
+// import { DatabaseItem } from "../../models/database-item";
+import { KeyValuePair } from "../../models/key-value-pair";
 import { errorLogger } from "../../utils/error-logger";
-
-interface Params {
-  TableName: string;
-  Key: DatabaseItem;
-  ProjectionExpression?: string;
-}
 
 class DatabaseService {
   private documentClient: DynamoDB.DocumentClient;
-
-  private tableName: string = DATABASE_TABLE;
 
   constructor() {
     aws.config.update({ region: "us-east-1" });
     this.documentClient = new aws.DynamoDB.DocumentClient();
   }
 
-  // async create(key: string, value: DatabaseValue): Promise<any> {
+  // async create(
+  //   table: string,
+  //   key: Record<string, string>,
+  //   item: DatabaseItem
+  // ): Promise<void> {
   //   try {
-  //     const transId = "789";
   //     const params = {
-  //       TableName: this.tableName,
-  //       Key: { userId: "123" },
-  //       UpdateExpression: "SET transactions.#transId = :newTrans",
-  //       ExpressionAttributeNames: { "#transId": transId },
-  //       ExpressionAttributeValues: {
-  //         ":newTrans": { amount: 789.99 }
-  //       },
-  //       ConditionExpression: "attribute_not_exists(transactions.#transId)"
+  //       TableName: table,
+  //       Key: key,
+  //       Item: { ...key, ...item }
   //     };
-
-  //     const response = await this.documentClient.update(params).promise();
-
-  //     return;
+  //     await this.documentClient.put(params).promise();
   //   } catch (error) {
-  //     console.log("ERROR: DatabaseService");
-  //     console.log(error);
+  //     errorLogger("DatabaseService", error);
+  //     throw error;
   //   }
-
-  //   return;
   // }
 
-  async read(
-    key: string,
-    value: DatabaseValue,
-    itemAttribute: string
-  ): Promise<DatabaseItem> {
+  async read(table: string, filterCondition: KeyValuePair): Promise<ItemList> {
     try {
-      const params = this.getParams(key, value, itemAttribute);
+      const params = {
+        TableName: table,
+        KeyConditionExpression: "#keyName = :keyValue",
+        ExpressionAttributeNames: {
+          "#keyName": filterCondition.getKey()
+        },
+        ExpressionAttributeValues: {
+          ":keyValue": filterCondition.getValue()
+        }
+      };
 
-      const { Item: item } = await this.documentClient.get(params).promise();
+      const { Items: items } = await this.documentClient
+        .query(params)
+        .promise();
 
-      return item;
+      return items;
     } catch (error) {
       errorLogger("DatabaseService", error);
+      throw new Error("Records not found");
     }
-
-    return undefined;
-  }
-
-  private getParams(
-    key: string,
-    value: DatabaseValue,
-    itemAttribute: string
-  ): Params {
-    const paramKey = { [key]: value };
-    return {
-      TableName: this.tableName,
-      Key: paramKey,
-      ProjectionExpression: itemAttribute
-    };
   }
 }
+
+// async update(
+//   key: string,
+//   value: string,
+//   itemAttribute: string,
+//   itemKey: string,
+//   itemValue: DatabaseItem
+// ): Promise<DatabaseItem> {
+//   try {
+//     const params = {
+//       TableName: this.tableName,
+//       Key: { [key]: value },
+//       UpdateExpression: `SET ${itemAttribute}.#itemKey = :newItem`,
+//       ExpressionAttributeNames: { "#itemKey": itemKey },
+//       ExpressionAttributeValues: {
+//         ":newItem": { amount: 789.99 }
+//       },
+//       ConditionExpression: `attribute_exists(${itemAttribute}.#itemKey)`
+//     };
+
+//     const response = await this.documentClient.update(params).promise();
+//     console.log(response);
+
+//     return;
+//   } catch (error) {
+//     errorLogger("DatabaseService", error);
+//   }
+// }
 
 export { DatabaseService };

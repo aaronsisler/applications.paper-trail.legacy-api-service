@@ -1,10 +1,13 @@
 import { UserService } from "./index";
 import { rawUserDetails } from "../../mocks/raw-user-details";
 import { userDetails } from "../../mocks/user-details";
+import { KeyValuePair } from "../../models/key-value-pair";
 import { User } from "../../models/user";
 import { errorLogger } from "../../utils/error-logger";
 
 let mockRead: jest.Mock;
+
+jest.mock("../../config", () => ({ DATABASE_TABLE_USERS: "mock-users-table" }));
 
 jest.mock("../../utils/error-logger", () => ({
   errorLogger: jest.fn().mockReturnThis()
@@ -17,6 +20,7 @@ jest.mock("../../services/database-service", () => ({
 }));
 
 describe("services/UserService", () => {
+  const mockKeyValuePair = new KeyValuePair("userId", "mock-user-id");
   let userService: UserService;
   let returnedUser: User;
 
@@ -35,22 +39,46 @@ describe("services/UserService", () => {
 
   describe("when user details are requested", () => {
     describe("and is successful", () => {
-      beforeEach(async () => {
-        mockRead = jest.fn().mockResolvedValue(rawUserDetails);
-        userService = new UserService();
-        returnedUser = await userService.getUserDetails("mock-user-id");
-      });
+      describe("and a user is NOT found", () => {
+        beforeEach(async () => {
+          mockRead = jest.fn().mockResolvedValue([]);
+          userService = new UserService();
+          try {
+            userService = new UserService();
+            await userService.getUser("mock-user-id");
+          } catch (error) {} // eslint-disable-line no-empty
+        });
 
-      it("should call the database service with correct parameters", () => {
-        expect(mockRead).toHaveBeenCalledWith(
-          "userId",
-          "mock-user-id",
-          "userDetails"
-        );
-      });
+        it("should call the database service with correct parameters", () => {
+          expect(mockRead).toHaveBeenCalledWith(
+            "mock-users-table",
+            mockKeyValuePair
+          );
+        });
 
-      it("should return the correct user", () => {
-        expect(returnedUser).toEqual(userDetails);
+        it("should throw an error", async () => {
+          await expect(
+            userService.getUser("mock-user-id")
+          ).rejects.toThrowError("User not found");
+        });
+      });
+      describe("and a user is found", () => {
+        beforeEach(async () => {
+          mockRead = jest.fn().mockResolvedValue([rawUserDetails]);
+          userService = new UserService();
+          returnedUser = await userService.getUser("mock-user-id");
+        });
+
+        it("should call the database service with correct parameters", () => {
+          expect(mockRead).toHaveBeenCalledWith(
+            "mock-users-table",
+            mockKeyValuePair
+          );
+        });
+
+        it("should return the correct user", () => {
+          expect(returnedUser).toEqual(userDetails);
+        });
       });
     });
 
@@ -59,20 +87,23 @@ describe("services/UserService", () => {
 
       beforeEach(async () => {
         mockRead = jest.fn().mockRejectedValue(expectedError);
-        userService = new UserService();
-        returnedUser = await userService.getUserDetails("mock-user-id");
+        try {
+          userService = new UserService();
+          await userService.getUser("mock-user-id");
+        } catch (error) {} // eslint-disable-line no-empty
       });
 
       it("should call the database service with correct parameters", () => {
         expect(mockRead).toHaveBeenCalledWith(
-          "userId",
-          "mock-user-id",
-          "userDetails"
+          "mock-users-table",
+          mockKeyValuePair
         );
       });
 
-      it("should return the correct user", () => {
-        expect(returnedUser).toEqual(undefined);
+      it("should throw an error", async () => {
+        await expect(userService.getUser("mock-user-id")).rejects.toThrowError(
+          "User not found"
+        );
       });
 
       it("should log correct messages to the console", () => {
