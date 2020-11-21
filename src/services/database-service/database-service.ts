@@ -1,7 +1,7 @@
 import aws, { DynamoDB } from "aws-sdk";
 import { ItemList } from "aws-sdk/clients/dynamodb";
 
-// import { DatabaseItem } from "../../models/database-item";
+import { DatabaseItem } from "../../models/database-item";
 import { KeyValuePair } from "../../models/key-value-pair";
 import { errorLogger } from "../../utils/error-logger";
 
@@ -13,23 +13,24 @@ class DatabaseService {
     this.documentClient = new aws.DynamoDB.DocumentClient();
   }
 
-  // async create(
-  //   table: string,
-  //   key: Record<string, string>,
-  //   item: DatabaseItem
-  // ): Promise<void> {
-  //   try {
-  //     const params = {
-  //       TableName: table,
-  //       Key: key,
-  //       Item: { ...key, ...item }
-  //     };
-  //     await this.documentClient.put(params).promise();
-  //   } catch (error) {
-  //     errorLogger("DatabaseService", error);
-  //     throw error;
-  //   }
-  // }
+  async create(
+    table: string,
+    keyValuePair: KeyValuePair,
+    item: DatabaseItem
+  ): Promise<void> {
+    try {
+      const key = { [keyValuePair.getKey()]: keyValuePair.getValue() };
+      const params = {
+        TableName: table,
+        Key: key,
+        Item: { ...key, ...item }
+      };
+      await this.documentClient.put(params).promise();
+    } catch (error) {
+      errorLogger("DatabaseService", error);
+      throw new Error("Record not created");
+    }
+  }
 
   async read(table: string, filterCondition: KeyValuePair): Promise<ItemList> {
     try {
