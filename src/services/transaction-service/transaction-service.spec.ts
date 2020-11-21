@@ -5,6 +5,7 @@ import { KeyValuePair } from "../../models/key-value-pair";
 import { Transaction } from "../../models/transaction";
 import { errorLogger } from "../../utils/error-logger";
 
+let mockCreate: jest.Mock;
 let mockRead: jest.Mock;
 
 jest.mock("../../config", () => ({
@@ -13,6 +14,7 @@ jest.mock("../../config", () => ({
 
 jest.mock("../../services/database-service", () => ({
   DatabaseService: jest.fn().mockImplementation(() => ({
+    create: mockCreate,
     read: mockRead
   }))
 }));
@@ -37,6 +39,62 @@ describe("services/TransactionService", () => {
   it("should be a class", () => {
     expect(typeof TransactionService).toEqual("function");
     expect(typeof transactionService).toEqual("object");
+  });
+
+  describe("when a transaction is created", () => {
+    const [transaction] = transactions;
+
+    describe("and the call is successful", () => {
+      beforeEach(async () => {
+        mockCreate = jest.fn().mockResolvedValue(undefined);
+        transactionService = new TransactionService();
+        await transactionService.createTransaction("mock-user-id", transaction);
+      });
+
+      it("should publish to the database using the correct parameters", () => {
+        expect(mockCreate).toHaveBeenCalledWith(
+          "mock-transactions-table",
+          mockKeyValuePair,
+          transaction
+        );
+      });
+    });
+
+    describe("and the call is NOT successful", () => {
+      const expectedError = "mock-error";
+
+      beforeEach(async () => {
+        mockCreate = jest.fn().mockRejectedValue(expectedError);
+        try {
+          transactionService = new TransactionService();
+          await transactionService.createTransaction(
+            "mock-user-id",
+            transaction
+          );
+        } catch (error) {} // eslint-disable-line no-empty
+      });
+
+      it("should publish to the database using the correct parameters", () => {
+        expect(mockCreate).toHaveBeenCalledWith(
+          "mock-transactions-table",
+          mockKeyValuePair,
+          transaction
+        );
+      });
+
+      it("should throw an error", async () => {
+        await expect(
+          transactionService.createTransaction("mock-user-id", transaction)
+        ).rejects.toThrowError("Transaction not created");
+      });
+
+      it("should log error messages correctly", () => {
+        expect(errorLogger).toHaveBeenCalledWith(
+          "TransactionService",
+          expectedError
+        );
+      });
+    });
   });
 
   describe("when transactions are requested", () => {
@@ -110,7 +168,7 @@ describe("services/TransactionService", () => {
         ).rejects.toThrowError("Transactions not found");
       });
 
-      it("should log correct messages to the console", () => {
+      it("should log error messages correctly", () => {
         expect(errorLogger).toHaveBeenCalledWith(
           "TransactionService",
           expectedError

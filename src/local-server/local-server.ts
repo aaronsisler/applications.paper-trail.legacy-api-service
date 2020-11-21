@@ -1,10 +1,10 @@
 import express from "express";
-import { DATABASE_TABLE_TRANSACTIONS } from "../config";
+// import { DATABASE_TABLE_TRANSACTIONS } from "../config";
 import { KeyValuePair } from "../models/key-value-pair";
 import { Transaction } from "../models/transaction";
 import { User } from "../models/user";
 import { AuthService } from "../services/auth-service";
-import { DatabaseService } from "../services/database-service";
+// import { DatabaseService } from "../services/database-service";
 import { HealthService } from "../services/health-service";
 import { TransactionService } from "../services/transaction-service";
 import { UserService } from "../services/user-service";
@@ -14,12 +14,16 @@ const port = process.env.PORT || "9001";
 const userId = "101389202411803829037";
 
 app.get("/test", async (req, res) => {
-  const databaseService = new DatabaseService();
+  const transactionService = new TransactionService();
   const transactionId = "789012";
   const key = new KeyValuePair("userId", userId);
-  const transaction = { transactionId, amount: 789.21, isPending: true };
+  const transaction: Transaction = new Transaction({
+    transactionId,
+    amount: 789.22,
+    isPending: true
+  });
   try {
-    await databaseService.create(DATABASE_TABLE_TRANSACTIONS, key, transaction);
+    await transactionService.createTransaction(userId, transaction);
     return res.status(200).json("Worked");
   } catch (error) {
     console.log(error);

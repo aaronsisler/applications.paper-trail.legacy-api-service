@@ -106,7 +106,7 @@ describe("services/UserService", () => {
         );
       });
 
-      it("should log correct messages to the console", () => {
+      it("should log error messages correctly", () => {
         expect(errorLogger).toHaveBeenCalledWith("UserService", expectedError);
       });
     });
