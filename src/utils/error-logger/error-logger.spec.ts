@@ -19,7 +19,7 @@ describe("utils - Error Logger", () => {
     expect(typeof errorLogger).toEqual("function");
   });
 
-  it("should log correct messages to the console", () => {
+  it("should log error messages correctly", () => {
     errorLogger(mockCaller, mockErrorMessage);
 
     expect(console.warn).toHaveBeenCalledWith("ERROR: mock-caller");
