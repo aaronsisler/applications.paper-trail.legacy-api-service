@@ -31,7 +31,7 @@ jest.mock("../../utils/error-logger", () => ({
   errorLogger: jest.fn().mockReturnThis()
 }));
 
-describe("Handlers/Transactions:Post", () => {
+describe("Handlers/User:Post", () => {
   let callback: Callback<APIGatewayProxyResult>;
   let event: any;
 
@@ -108,7 +108,7 @@ describe("Handlers/Transactions:Post", () => {
             await handler(event, undefined, callback);
           });
 
-          it("should attempt to create transaction correctly", async () => {
+          it("should attempt to create user correctly", async () => {
             expect(mockCreateUser).toHaveBeenCalledWith({
               ...rawUserDetails,
               userId: "mock-auth-id"
