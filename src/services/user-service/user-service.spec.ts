@@ -5,6 +5,7 @@ import { KeyValuePair } from "../../models/key-value-pair";
 import { User } from "../../models/user";
 import { errorLogger } from "../../utils/error-logger";
 
+let mockCreate: jest.Mock;
 let mockRead: jest.Mock;
 
 jest.mock("../../config", () => ({ DATABASE_TABLE_USERS: "mock-users-table" }));
@@ -15,6 +16,7 @@ jest.mock("../../utils/error-logger", () => ({
 
 jest.mock("../../services/database-service", () => ({
   DatabaseService: jest.fn().mockImplementation(() => ({
+    create: mockCreate,
     read: mockRead
   }))
 }));
@@ -35,6 +37,54 @@ describe("services/UserService", () => {
   it("should be a class", () => {
     expect(typeof UserService).toEqual("function");
     expect(typeof userService).toEqual("object");
+  });
+
+  describe("when a user is created", () => {
+    describe("and the call is successful", () => {
+      beforeEach(async () => {
+        mockCreate = jest.fn().mockResolvedValue(undefined);
+        userService = new UserService();
+        await userService.createUser(userDetails);
+      });
+
+      it("should publish to the database using the correct parameters", () => {
+        expect(mockCreate).toHaveBeenCalledWith(
+          "mock-users-table",
+          mockKeyValuePair,
+          userDetails
+        );
+      });
+    });
+
+    describe("and the call is NOT successful", () => {
+      const expectedError = "mock-error";
+
+      beforeEach(async () => {
+        mockCreate = jest.fn().mockRejectedValue(expectedError);
+        try {
+          userService = new UserService();
+          await userService.createUser(userDetails);
+        } catch (error) {} // eslint-disable-line no-empty
+      });
+
+      it("should publish to the database using the correct parameters", () => {
+        expect(mockCreate).toHaveBeenCalledWith(
+          "mock-users-table",
+          mockKeyValuePair,
+          userDetails
+        );
+      });
+
+      it("should throw an error", async () => {
+        await expect(userService.createUser(userDetails)).rejects.toThrowError(
+          "User not created"
+        );
+      });
+
+      it("should log error messages correctly", () => {
+        expect(errorLogger).toHaveBeenCalledWith("UserService", expectedError);
+      });
+    });
   });
 
   describe("when user details are requested", () => {
