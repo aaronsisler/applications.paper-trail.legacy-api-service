@@ -1,19 +1,18 @@
 import {
-  APIGatewayProxyHandler,
   APIGatewayProxyEvent,
+  APIGatewayProxyHandler,
   APIGatewayProxyResult,
   Callback,
   Context
 } from "aws-lambda";
-import { v4 as uuidv4 } from "uuid";
 import { HandlerResponse } from "../../models/handler-response";
-import { Transaction } from "../../models/transaction";
+import { User } from "../../models/user";
 import { AuthService } from "../../services/auth-service";
-import { TransactionService } from "../../services/transaction-service";
-import { errorLogger } from "../../utils/error-logger";
+import { UserService } from "../../services/user-service";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
+import { errorLogger } from "../../utils/error-logger";
 
-const transactionsPost: APIGatewayProxyHandler = async (
+const userPost: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent,
   _context: Context,
   callback: Callback<APIGatewayProxyResult>
@@ -24,7 +23,7 @@ const transactionsPost: APIGatewayProxyHandler = async (
     const authService = new AuthService();
     authId = await authService.getAuthId(event);
   } catch (error) {
-    errorLogger("Handler/Transactions:Post", error);
+    errorLogger("Handler/User:Post", error);
     const response: HandlerResponse = responseBodyBuilder({
       statusCode: 401,
       body: "Unauthorized"
@@ -34,17 +33,16 @@ const transactionsPost: APIGatewayProxyHandler = async (
     return;
   }
 
-  let transaction: Transaction;
+  let user: User;
   try {
     const { body: rawBody } = event;
     const body = JSON.parse(rawBody);
-    const transactionId = uuidv4();
-    transaction = new Transaction({
+    user = new User({
       ...body,
-      transactionId
+      userId: authId
     });
   } catch (error) {
-    errorLogger("Handler/Transactions:Post", error);
+    errorLogger("Handler/User:Post", error);
     const response: HandlerResponse = responseBodyBuilder({
       statusCode: 400,
       body: "Bad request"
@@ -54,22 +52,24 @@ const transactionsPost: APIGatewayProxyHandler = async (
   }
 
   try {
-    const transactionService = new TransactionService();
-    await transactionService.createTransaction(authId, transaction);
+    const userService = new UserService();
+    await userService.createUser(user);
 
     const response: HandlerResponse = responseBodyBuilder({
-      statusCode: 204,
-      body: undefined
+      statusCode: 200,
+      body: user
     });
 
     callback(null, response);
   } catch (error) {
+    errorLogger("Handler/User:Post", error);
     const response: HandlerResponse = responseBodyBuilder({
       statusCode: 500,
       body: undefined
     });
+
     callback(null, response);
   }
 };
 
-export { transactionsPost };
+export { userPost };
