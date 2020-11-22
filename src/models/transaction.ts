@@ -1,9 +1,9 @@
 export class Transaction {
   transactionId: string; // DDB unique generated ID
 
-  sourceTransId: string; // transaction_id string Transaction Id from 3rd party API
-
   amount: number; // amount number
+
+  sourceTransId: string; // transaction_id string Transaction Id from 3rd party API
 
   financialAccountId: string; // account_id string
 
@@ -19,8 +19,8 @@ export class Transaction {
 
   constructor(options?: {
     transactionId: string;
-    sourceTransId?: string;
     amount: number;
+    sourceTransId?: string;
     financialAccountId?: string;
     transCategoryIds?: string[];
     transDate?: string;
@@ -30,8 +30,8 @@ export class Transaction {
   }) {
     if (options) {
       this.transactionId = options.transactionId;
-      this.sourceTransId = options.sourceTransId;
       this.amount = options.amount;
+      this.sourceTransId = options.sourceTransId;
       this.financialAccountId = options.financialAccountId;
       this.transCategoryIds = options.transCategoryIds;
       this.transDate = options.transDate;
