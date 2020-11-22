@@ -1,0 +1,3 @@
+class RequestVerificationService {}
+
+export { RequestVerificationService };
