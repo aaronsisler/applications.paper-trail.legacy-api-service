@@ -32,13 +32,20 @@ functions:
       - http:
           path: /user
           method: get
-  transactions:
+  transactions-get:
     handler: dist/handlers/transactions-get-handler/index.handler
-    description: Retrieve user with OAuth token. Responds with user's transaction information.
+    description: Retrieve user with OAuth token. Responds with user's transactions.
     events:
       - http:
           path: /transactions
           method: get
+  transactions-post:
+    handler: dist/handlers/transactions-post-handler/index.handler
+    description: Retrieve user with OAuth token. Create transaction for given user.
+    events:
+      - http:
+          path: /transactions
+          method: post
 
 plugins:
   - serverless-domain-manager
