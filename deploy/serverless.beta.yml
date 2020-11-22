@@ -32,6 +32,13 @@ functions:
       - http:
           path: /user
           method: get
+  user-post:
+    handler: dist/handlers/user-post-handler/index.handler
+    description: Retrieve user with OAuth token. Create user with given user information.
+    events:
+      - http:
+          path: /user
+          method: post
   transactions-get:
     handler: dist/handlers/transactions-get-handler/index.handler
     description: Retrieve user with OAuth token. Responds with user's transactions.

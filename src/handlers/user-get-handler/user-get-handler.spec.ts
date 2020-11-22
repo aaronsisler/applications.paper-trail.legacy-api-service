@@ -26,9 +26,8 @@ jest.mock("../../utils/error-logger", () => ({
   errorLogger: jest.fn().mockReturnThis()
 }));
 
-describe("handlers/user-get", () => {
+describe("Handlers/User:Get", () => {
   let callback: Callback<APIGatewayProxyResult>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let event: any;
 
   beforeEach(async () => {
