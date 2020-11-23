@@ -1,4 +1,5 @@
 import express from "express";
+import { DATABASE_TABLE_TRANSACTIONS } from "../config";
 // import { DATABASE_TABLE_TRANSACTIONS } from "../config";
 import { KeyValuePair } from "../models/key-value-pair";
 import { Transaction } from "../models/transaction";
@@ -19,17 +20,11 @@ const transactionService = new TransactionService();
 const userService = new UserService();
 
 app.get("/test", async (req, res) => {
-  const user: User = new User({
-    userId: "123456",
-    lastName: "Sisler",
-    firstName: "Ellie"
-  });
-  const key = new KeyValuePair("userId", userId);
+  // const key = new KeyValuePair("userId", userId);
   try {
-    await userService.createUser(user);
+    await databaseService.update(DATABASE_TABLE_TRANSACTIONS);
     return res.status(200).json("Worked");
   } catch (error) {
-    console.log(error);
     return res.status(500).json("Failure");
   }
 });
