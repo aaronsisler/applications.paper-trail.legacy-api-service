@@ -5,7 +5,6 @@ import {
   Callback,
   Context
 } from "aws-lambda";
-import { v4 as uuidv4 } from "uuid";
 import { HandlerResponse } from "../../models/handler-response";
 import { Transaction } from "../../models/transaction";
 import { AuthService } from "../../services/auth-service";
@@ -38,10 +37,8 @@ const transactionsPost: APIGatewayProxyHandler = async (
   try {
     const { body: rawBody } = event;
     const body = JSON.parse(rawBody);
-    const transactionId = uuidv4();
     transaction = new Transaction({
-      ...body,
-      transactionId
+      ...body
     });
   } catch (error) {
     errorLogger("Handler/Transactions:Post", error);
@@ -59,7 +56,7 @@ const transactionsPost: APIGatewayProxyHandler = async (
 
     const response: HandlerResponse = responseBodyBuilder({
       statusCode: 204,
-      body: undefined
+      body: transaction
     });
 
     callback(null, response);
