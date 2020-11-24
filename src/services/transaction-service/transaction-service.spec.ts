@@ -24,7 +24,8 @@ jest.mock("../../utils/error-logger", () => ({
 }));
 
 describe("services/TransactionService", () => {
-  const mockKeyValuePair = new KeyValuePair("userId", "mock-user-id");
+  const mockUserIdKeyValuePair = new KeyValuePair("userId", "mock-user-id");
+  const mocktransIdKeyValuePair = new KeyValuePair("transactionId", "123");
   let transactionService: TransactionService;
   let returnedTransactions: Transaction[];
 
@@ -54,7 +55,7 @@ describe("services/TransactionService", () => {
       it("should publish to the database using the correct parameters", () => {
         expect(mockCreate).toHaveBeenCalledWith(
           "mock-transactions-table",
-          mockKeyValuePair,
+          [mockUserIdKeyValuePair, mocktransIdKeyValuePair],
           transaction
         );
       });
@@ -77,7 +78,7 @@ describe("services/TransactionService", () => {
       it("should publish to the database using the correct parameters", () => {
         expect(mockCreate).toHaveBeenCalledWith(
           "mock-transactions-table",
-          mockKeyValuePair,
+          [mockUserIdKeyValuePair, mocktransIdKeyValuePair],
           transaction
         );
       });
@@ -111,7 +112,7 @@ describe("services/TransactionService", () => {
         it("should read from the database using the correct parameters", () => {
           expect(mockRead).toHaveBeenCalledWith(
             "mock-transactions-table",
-            mockKeyValuePair
+            mockUserIdKeyValuePair
           );
         });
 
@@ -134,7 +135,7 @@ describe("services/TransactionService", () => {
         it("should read from the database using the correct parameters", () => {
           expect(mockRead).toHaveBeenCalledWith(
             "mock-transactions-table",
-            mockKeyValuePair
+            mockUserIdKeyValuePair
           );
         });
 
@@ -158,7 +159,7 @@ describe("services/TransactionService", () => {
       it("should read from the database using the correct parameters", () => {
         expect(mockRead).toHaveBeenCalledWith(
           "mock-transactions-table",
-          mockKeyValuePair
+          mockUserIdKeyValuePair
         );
       });
 

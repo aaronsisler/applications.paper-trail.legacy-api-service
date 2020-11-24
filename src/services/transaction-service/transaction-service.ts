@@ -17,10 +17,15 @@ class TransactionService {
     transaction: Transaction
   ): Promise<void> {
     try {
-      const key = new KeyValuePair("userId", userId);
+      const userIdKey = new KeyValuePair("userId", userId);
+      const transIdKey = new KeyValuePair(
+        "transactionId",
+        transaction.transactionId
+      );
+
       await this.databaseService.create(
         DATABASE_TABLE_TRANSACTIONS,
-        key,
+        [userIdKey, transIdKey],
         (transaction as unknown) as DatabaseItem
       );
     } catch (error) {

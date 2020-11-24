@@ -22,7 +22,7 @@ jest.mock("../../services/database-service", () => ({
 }));
 
 describe("services/UserService", () => {
-  const mockKeyValuePair = new KeyValuePair("userId", "mock-user-id");
+  const mockUserIdKeyValuePair = new KeyValuePair("userId", "mock-user-id");
   let userService: UserService;
   let returnedUser: User;
 
@@ -50,7 +50,7 @@ describe("services/UserService", () => {
       it("should publish to the database using the correct parameters", () => {
         expect(mockCreate).toHaveBeenCalledWith(
           "mock-users-table",
-          mockKeyValuePair,
+          [mockUserIdKeyValuePair],
           userDetails
         );
       });
@@ -70,7 +70,7 @@ describe("services/UserService", () => {
       it("should publish to the database using the correct parameters", () => {
         expect(mockCreate).toHaveBeenCalledWith(
           "mock-users-table",
-          mockKeyValuePair,
+          [mockUserIdKeyValuePair],
           userDetails
         );
       });
@@ -102,7 +102,7 @@ describe("services/UserService", () => {
         it("should call the database service with correct parameters", () => {
           expect(mockRead).toHaveBeenCalledWith(
             "mock-users-table",
-            mockKeyValuePair
+            mockUserIdKeyValuePair
           );
         });
 
@@ -122,7 +122,7 @@ describe("services/UserService", () => {
         it("should call the database service with correct parameters", () => {
           expect(mockRead).toHaveBeenCalledWith(
             "mock-users-table",
-            mockKeyValuePair
+            mockUserIdKeyValuePair
           );
         });
 
@@ -146,7 +146,7 @@ describe("services/UserService", () => {
       it("should call the database service with correct parameters", () => {
         expect(mockRead).toHaveBeenCalledWith(
           "mock-users-table",
-          mockKeyValuePair
+          mockUserIdKeyValuePair
         );
       });
 

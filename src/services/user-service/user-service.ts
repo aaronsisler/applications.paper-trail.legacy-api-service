@@ -19,7 +19,7 @@ class UserService {
       const key = new KeyValuePair("userId", user.userId);
       await this.databaseService.create(
         DATABASE_TABLE_USERS,
-        key,
+        [key],
         (user as unknown) as DatabaseItem
       );
     } catch (error) {
