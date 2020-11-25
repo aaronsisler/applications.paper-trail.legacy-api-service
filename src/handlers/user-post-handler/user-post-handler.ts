@@ -56,7 +56,7 @@ const userPost: APIGatewayProxyHandler = async (
     await userService.createUser(user);
 
     const response: HandlerResponse = responseBodyBuilder({
-      statusCode: 200,
+      statusCode: 201,
       body: user
     });
 

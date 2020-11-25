@@ -3,13 +3,10 @@ import { handler } from "./index";
 import { errorLogger } from "../../utils/error-logger";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 import { rawTransactions } from "../../mocks/raw-transactions";
+import { transactions } from "../../mocks/transactions";
 
 let mockGetAuthId: jest.Mock;
 let mockCreateTransaction: jest.Mock;
-
-jest.mock("uuid", () => ({
-  v4: jest.fn().mockReturnValue("mock-uuid")
-}));
 
 jest.mock("../../services/auth-service", () => ({
   AuthService: jest.fn(() => ({
@@ -75,6 +72,7 @@ describe("Handlers/Transactions:Post", () => {
       beforeEach(() => {
         mockGetAuthId = jest.fn().mockResolvedValue("mock-auth-id");
       });
+
       describe("and when request is NOT valid", () => {
         beforeEach(async () => {
           await handler(event, undefined, callback);
@@ -109,16 +107,16 @@ describe("Handlers/Transactions:Post", () => {
           });
 
           it("should attempt to create transaction correctly", async () => {
-            expect(mockCreateTransaction).toHaveBeenCalledWith("mock-auth-id", {
-              ...rawTransactions[0],
-              transactionId: "mock-uuid"
-            });
+            expect(mockCreateTransaction).toHaveBeenCalledWith(
+              "mock-auth-id",
+              rawTransactions[0]
+            );
           });
 
           it("should return the correct response", () => {
             expect(responseBodyBuilder).toHaveBeenCalledWith({
-              statusCode: 204,
-              body: undefined
+              statusCode: 201,
+              body: transactions[0]
             });
           });
 
@@ -137,10 +135,10 @@ describe("Handlers/Transactions:Post", () => {
           });
 
           it("should attempt to create transaction correctly", async () => {
-            expect(mockCreateTransaction).toHaveBeenCalledWith("mock-auth-id", {
-              ...rawTransactions[0],
-              transactionId: "mock-uuid"
-            });
+            expect(mockCreateTransaction).toHaveBeenCalledWith(
+              "mock-auth-id",
+              rawTransactions[0]
+            );
           });
 
           it("should return the correct response", () => {

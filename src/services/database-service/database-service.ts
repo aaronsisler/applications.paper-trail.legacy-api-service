@@ -4,6 +4,7 @@ import { ItemList } from "aws-sdk/clients/dynamodb";
 import { DatabaseItem } from "../../models/database-item";
 import { KeyValuePair } from "../../models/key-value-pair";
 import { errorLogger } from "../../utils/error-logger";
+// import { rawTransactions } from "../../mocks/raw-transactions";
 
 class DatabaseService {
   private documentClient: DynamoDB.DocumentClient;
@@ -15,15 +16,37 @@ class DatabaseService {
 
   async create(
     table: string,
-    keyValuePair: KeyValuePair,
+    keyValuePairs: KeyValuePair[] = [],
     item: DatabaseItem
   ): Promise<void> {
+    if (![1, 2].includes(keyValuePairs.length)) {
+      errorLogger("DatabaseService", "Incorrect keys provided");
+      throw new Error("Record not created");
+    }
+
     try {
-      const key = { [keyValuePair.getKey()]: keyValuePair.getValue() };
+      const key = { [keyValuePairs[0].getKey()]: keyValuePairs[0].getValue() };
+      let conditionExpression;
+      let expressionAttributeNames;
+
+      if (keyValuePairs.length === 1) {
+        conditionExpression = "attribute_not_exists(#hashKey)";
+        expressionAttributeNames = { "#hashKey": keyValuePairs[0].getKey() };
+      } else {
+        // eslint-disable-next-line operator-linebreak
+        conditionExpression =
+          "attribute_not_exists(#hashKey) AND attribute_not_exists(#rangeKey)";
+        expressionAttributeNames = {
+          "#hashKey": keyValuePairs[0].getKey(),
+          "#rangeKey": keyValuePairs[1].getKey()
+        };
+      }
       const params = {
         TableName: table,
         Key: key,
-        Item: { ...key, ...item }
+        Item: { ...item, ...key },
+        ConditionExpression: conditionExpression,
+        ExpressionAttributeNames: expressionAttributeNames
       };
       await this.documentClient.put(params).promise();
     } catch (error) {
@@ -55,34 +78,49 @@ class DatabaseService {
       throw new Error("Records not found");
     }
   }
+
+  async update(
+    table: string,
+    keyValuePairs: KeyValuePair[] = [],
+    item: DatabaseItem
+  ): Promise<void> {
+    if (![1, 2].includes(keyValuePairs.length)) {
+      errorLogger("DatabaseService", "Incorrect keys provided");
+      throw new Error("Record not updated");
+    }
+
+    try {
+      const key = { [keyValuePairs[0].getKey()]: keyValuePairs[0].getValue() };
+      let conditionExpression;
+      let expressionAttributeNames;
+
+      if (keyValuePairs.length === 1) {
+        conditionExpression = "attribute_exists(#hashKey)";
+        expressionAttributeNames = { "#hashKey": keyValuePairs[0].getKey() };
+      } else {
+        // eslint-disable-next-line operator-linebreak
+        conditionExpression =
+          "attribute_exists(#hashKey) AND attribute_exists(#rangeKey)";
+        expressionAttributeNames = {
+          "#hashKey": keyValuePairs[0].getKey(),
+          "#rangeKey": keyValuePairs[1].getKey()
+        };
+      }
+      const params = {
+        TableName: table,
+        Key: key,
+        Item: { ...item, ...key },
+        ConditionExpression: conditionExpression,
+        ExpressionAttributeNames: expressionAttributeNames
+      };
+
+      await this.documentClient.put(params).promise();
+      return;
+    } catch (error) {
+      errorLogger("DatabaseService", error);
+      throw new Error("Record not updated");
+    }
+  }
 }
-
-// async update(
-//   key: string,
-//   value: string,
-//   itemAttribute: string,
-//   itemKey: string,
-//   itemValue: DatabaseItem
-// ): Promise<DatabaseItem> {
-//   try {
-//     const params = {
-//       TableName: this.tableName,
-//       Key: { [key]: value },
-//       UpdateExpression: `SET ${itemAttribute}.#itemKey = :newItem`,
-//       ExpressionAttributeNames: { "#itemKey": itemKey },
-//       ExpressionAttributeValues: {
-//         ":newItem": { amount: 789.99 }
-//       },
-//       ConditionExpression: `attribute_exists(${itemAttribute}.#itemKey)`
-//     };
-
-//     const response = await this.documentClient.update(params).promise();
-//     console.log(response);
-
-//     return;
-//   } catch (error) {
-//     errorLogger("DatabaseService", error);
-//   }
-// }
 
 export { DatabaseService };
