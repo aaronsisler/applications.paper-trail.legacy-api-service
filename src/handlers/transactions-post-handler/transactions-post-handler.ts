@@ -55,7 +55,7 @@ const transactionsPost: APIGatewayProxyHandler = async (
     await transactionService.createTransaction(authId, transaction);
 
     const response: HandlerResponse = responseBodyBuilder({
-      statusCode: 204,
+      statusCode: 201,
       body: transaction
     });
 

@@ -7,10 +7,6 @@ import { rawUserDetails } from "../../mocks/raw-user-details";
 let mockGetAuthId: jest.Mock;
 let mockCreateUser: jest.Mock;
 
-jest.mock("uuid", () => ({
-  v4: jest.fn().mockReturnValue("mock-uuid")
-}));
-
 jest.mock("../../services/auth-service", () => ({
   AuthService: jest.fn(() => ({
     getAuthId: mockGetAuthId
