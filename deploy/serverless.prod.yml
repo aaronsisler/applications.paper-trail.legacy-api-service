@@ -53,6 +53,13 @@ functions:
       - http:
           path: /transactions
           method: post
+  transactions-put:
+    handler: dist/handlers/transactions-put-handler/index.handler
+    description: Retrieve user with OAuth token. Update transaction for given user.
+    events:
+      - http:
+          path: /transactions
+          method: put
 
 plugins:
   - serverless-domain-manager
