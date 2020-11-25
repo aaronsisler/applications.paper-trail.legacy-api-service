@@ -79,36 +79,48 @@ class DatabaseService {
     }
   }
 
-  // async update(
-  //   table: string
-  //   // keyValuePair: KeyValuePair[],
-  //   // itemKey: string
-  // ): Promise<void> {
-  //   try {
-  //     const [transaction] = rawTransactions;
-  //     const key = {
-  //       userId: "101389202411803829037",
-  //       transactionId: "beada485-e3a4-4c20-911d-9a9901473432"
-  //     };
-  //     const params = {
-  //       TableName: table,
-  //       Key: key,
-  //       // KeyConditionExpression: 'device_id = :id',
-  //       Item: { ...transaction, ...key, amount: 45 },
-  //       ConditionExpression: `attribute_exists(#hashKey) AND attribute_exists(#rangeKey)`,
-  //       ExpressionAttributeNames: {
-  //         "#hashKey": "userId",
-  //         "#rangeKey": "transactionId"
-  //       }
-  //     };
+  async update(
+    table: string,
+    keyValuePairs: KeyValuePair[] = [],
+    item: DatabaseItem
+  ): Promise<void> {
+    if (![1, 2].includes(keyValuePairs.length)) {
+      errorLogger("DatabaseService", "Incorrect keys provided");
+      throw new Error("Record not updated");
+    }
 
-  //     await this.documentClient.put(params).promise();
-  //     return;
-  //   } catch (error) {
-  //     errorLogger("DatabaseService", error);
-  //     throw new Error("Record not updated");
-  //   }
-  // }
+    try {
+      const key = { [keyValuePairs[0].getKey()]: keyValuePairs[0].getValue() };
+      let conditionExpression;
+      let expressionAttributeNames;
+
+      if (keyValuePairs.length === 1) {
+        conditionExpression = "attribute_exists(#hashKey)";
+        expressionAttributeNames = { "#hashKey": keyValuePairs[0].getKey() };
+      } else {
+        // eslint-disable-next-line operator-linebreak
+        conditionExpression =
+          "attribute_exists(#hashKey) AND attribute_exists(#rangeKey)";
+        expressionAttributeNames = {
+          "#hashKey": keyValuePairs[0].getKey(),
+          "#rangeKey": keyValuePairs[1].getKey()
+        };
+      }
+      const params = {
+        TableName: table,
+        Key: key,
+        Item: { ...item, ...key },
+        ConditionExpression: conditionExpression,
+        ExpressionAttributeNames: expressionAttributeNames
+      };
+
+      await this.documentClient.put(params).promise();
+      return;
+    } catch (error) {
+      errorLogger("DatabaseService", error);
+      throw new Error("Record not updated");
+    }
+  }
 }
 
 export { DatabaseService };

@@ -23,7 +23,7 @@ jest.mock("../../utils/error-logger", () => ({
   errorLogger: jest.fn().mockReturnThis()
 }));
 
-describe("Services/DatabaseService", () => {
+describe("Services/DatabaseService:Read", () => {
   const mockTable = "MOCK_DATABASE_TABLE";
   const mockFirstKey = new KeyValuePair(
     "mock-first-key",

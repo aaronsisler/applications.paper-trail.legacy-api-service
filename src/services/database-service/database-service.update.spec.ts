@@ -22,7 +22,7 @@ jest.mock("../../utils/error-logger", () => ({
   errorLogger: jest.fn().mockReturnThis()
 }));
 
-describe("Services/DatabaseService:Create", () => {
+describe("Services/DatabaseService:Update", () => {
   const mockTable = "MOCK_DATABASE_TABLE";
   const mockFirstKey = new KeyValuePair(
     "mock-first-key",
@@ -49,13 +49,13 @@ describe("Services/DatabaseService:Create", () => {
     jest.resetAllMocks();
   });
 
-  describe("when a record is created", () => {
+  describe("when a record is updated", () => {
     describe("and no keys are given", () => {
       beforeEach(async () => {
         databaseService = new DatabaseService();
 
         try {
-          await databaseService.create(mockTable, undefined, mockItem);
+          await databaseService.update(mockTable, undefined, mockItem);
         } catch (error) {} // eslint-disable-line no-empty
       });
 
@@ -63,9 +63,9 @@ describe("Services/DatabaseService:Create", () => {
         expect.assertions(1);
 
         try {
-          await databaseService.create(mockTable, undefined, mockItem);
+          await databaseService.update(mockTable, undefined, mockItem);
         } catch (error) {
-          expect(error.message).toEqual("Record not created");
+          expect(error.message).toEqual("Record not updated");
         }
       });
 
@@ -82,13 +82,13 @@ describe("Services/DatabaseService:Create", () => {
         TableName: "MOCK_DATABASE_TABLE",
         Key: { "mock-first-key": "mock-first-key-value" },
         Item: mockItem,
-        ConditionExpression: "attribute_not_exists(#hashKey)",
+        ConditionExpression: "attribute_exists(#hashKey)",
         ExpressionAttributeNames: { "#hashKey": "mock-first-key" }
       };
 
       describe("and the call is successful", () => {
         beforeEach(async () => {
-          await databaseService.create(mockTable, [mockFirstKey], mockItem);
+          await databaseService.update(mockTable, [mockFirstKey], mockItem);
         });
 
         it("should have called the database with correct params", async () => {
@@ -102,7 +102,7 @@ describe("Services/DatabaseService:Create", () => {
           databaseService = new DatabaseService();
 
           try {
-            await databaseService.create(mockTable, [mockFirstKey], mockItem);
+            await databaseService.update(mockTable, [mockFirstKey], mockItem);
           } catch (error) {} // eslint-disable-line no-empty
         });
 
@@ -114,9 +114,9 @@ describe("Services/DatabaseService:Create", () => {
           expect.assertions(1);
 
           try {
-            await databaseService.create(mockTable, [mockFirstKey], mockItem);
+            await databaseService.update(mockTable, [mockFirstKey], mockItem);
           } catch (error) {
-            expect(error.message).toEqual("Record not created");
+            expect(error.message).toEqual("Record not updated");
           }
         });
 
@@ -135,7 +135,7 @@ describe("Services/DatabaseService:Create", () => {
         Key: { "mock-first-key": "mock-first-key-value" },
         Item: mockItem,
         ConditionExpression:
-          "attribute_not_exists(#hashKey) AND attribute_not_exists(#rangeKey)",
+          "attribute_exists(#hashKey) AND attribute_exists(#rangeKey)",
         ExpressionAttributeNames: {
           "#hashKey": "mock-first-key",
           "#rangeKey": "mock-second-key"
@@ -144,7 +144,7 @@ describe("Services/DatabaseService:Create", () => {
 
       describe("and the call is successful", () => {
         beforeEach(async () => {
-          await databaseService.create(
+          await databaseService.update(
             mockTable,
             [mockFirstKey, mockSecondKey],
             mockItem
@@ -163,7 +163,7 @@ describe("Services/DatabaseService:Create", () => {
           databaseService = new DatabaseService();
 
           try {
-            await databaseService.create(
+            await databaseService.update(
               mockTable,
               [mockFirstKey, mockSecondKey],
               mockItem
@@ -179,13 +179,13 @@ describe("Services/DatabaseService:Create", () => {
           expect.assertions(1);
 
           try {
-            await databaseService.create(
+            await databaseService.update(
               mockTable,
               [mockFirstKey, mockSecondKey],
               mockItem
             );
           } catch (error) {
-            expect(error.message).toEqual("Record not created");
+            expect(error.message).toEqual("Record not updated");
           }
         });
 

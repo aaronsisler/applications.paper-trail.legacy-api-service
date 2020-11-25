@@ -14,7 +14,7 @@ jest.mock("../../utils/error-logger", () => ({
   errorLogger: jest.fn().mockReturnThis()
 }));
 
-describe("Services/DatabaseService", () => {
+describe("Services/DatabaseService:Init", () => {
   let databaseService: DatabaseService;
 
   beforeEach(() => {
