@@ -55,6 +55,28 @@ class TransactionService {
     }
   }
 
+  async updateTransaction(
+    userId: string,
+    transaction: Transaction
+  ): Promise<void> {
+    try {
+      const userIdKey = new KeyValuePair("userId", userId);
+      const transIdKey = new KeyValuePair(
+        "transactionId",
+        transaction.transactionId
+      );
+
+      await this.databaseService.update(
+        DATABASE_TABLE_TRANSACTIONS,
+        [userIdKey, transIdKey],
+        (transaction as unknown) as DatabaseItem
+      );
+    } catch (error) {
+      errorLogger(TransactionService.name, error);
+      throw new Error("Transaction not updated");
+    }
+  }
+
   private mapRawTransactions = (rawTransactions: any): Transaction[] => {
     const transactions: Transaction[] = rawTransactions.map(
       (rawTransaction: Transaction) => new Transaction({ ...rawTransaction })
