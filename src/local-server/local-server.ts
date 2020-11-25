@@ -14,7 +14,7 @@ import { UserService } from "../services/user-service";
 
 const app = express();
 const port = process.env.PORT || "9001";
-const userId = "10138920241180382903";
+const userId = "101389202411803829037";
 const otherUserId = "101283742915444278865";
 
 const authService: AuthService = new AuthService();
@@ -44,8 +44,9 @@ app.get("/test-trans", async (req, res) => {
   try {
     const [transaction] = transactions;
     transaction.transactionId = transactionId;
+    transaction.amount = 567;
 
-    await transactionService.createTransaction(userId, transaction);
+    await transactionService.updateTransaction(userId, transaction);
 
     return res.status(200).json("Worked");
   } catch (error) {
