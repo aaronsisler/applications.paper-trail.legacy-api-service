@@ -113,7 +113,7 @@ describe("Handlers/User:Post", () => {
 
           it("should return the correct response", () => {
             expect(responseBodyBuilder).toHaveBeenCalledWith({
-              statusCode: 200,
+              statusCode: 201,
               body: {
                 ...rawUserDetails,
                 userId: "mock-auth-id"
