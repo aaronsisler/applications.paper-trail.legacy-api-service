@@ -47,6 +47,21 @@ class UserService {
       throw new Error("User not found");
     }
   }
+
+  async updateUser(user: User): Promise<void> {
+    try {
+      const userIdKey = new KeyValuePair("userId", user.userId);
+
+      await this.databaseService.update(
+        DATABASE_TABLE_USERS,
+        [userIdKey],
+        (user as unknown) as DatabaseItem
+      );
+    } catch (error) {
+      errorLogger(UserService.name, error);
+      throw new Error("User not updated");
+    }
+  }
 }
 
 export { UserService };
