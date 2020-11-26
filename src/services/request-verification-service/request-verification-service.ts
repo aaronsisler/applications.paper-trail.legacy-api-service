@@ -1,10 +1,12 @@
+/* eslint-disable function-paren-newline */
 import { Transaction } from "../../models/transaction";
 import { User } from "../../models/user";
+import { isStringEmpty } from "../../utils/string-utils";
 
 class RequestVerificationService {
   verifyTransaction = (transaction: Transaction): void => {
-    const hasEmptyAttributes = Object.values(transaction).some(
-      (x) => x === null || x === undefined
+    const hasEmptyAttributes = Object.values(transaction).some((x) =>
+      isStringEmpty(x)
     );
 
     if (hasEmptyAttributes) {
@@ -21,8 +23,8 @@ class RequestVerificationService {
   };
 
   verifyUser = (user: User): void => {
-    const hasEmptyAttributes = Object.values(user).some(
-      (x) => x === null || x === undefined
+    const hasEmptyAttributes = Object.values(user).some((x) =>
+      isStringEmpty(x)
     );
 
     if (hasEmptyAttributes) {
