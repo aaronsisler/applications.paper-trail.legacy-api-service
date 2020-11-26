@@ -8,6 +8,7 @@ import {
 import { HandlerResponse } from "../../models/handler-response";
 import { Transaction } from "../../models/transaction";
 import { AuthService } from "../../services/auth-service";
+import { RequestVerificationService } from "../../services/request-verification-service";
 import { TransactionService } from "../../services/transaction-service";
 import { errorLogger } from "../../utils/error-logger";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
@@ -40,6 +41,9 @@ const transactionsPost: APIGatewayProxyHandler = async (
     transaction = new Transaction({
       ...body
     });
+
+    const requestVerificationService = new RequestVerificationService();
+    requestVerificationService.verifyTransaction(transaction);
   } catch (error) {
     errorLogger("Handler/Transactions:Post", error);
     const response: HandlerResponse = responseBodyBuilder({
