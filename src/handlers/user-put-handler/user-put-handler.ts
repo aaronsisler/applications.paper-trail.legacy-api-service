@@ -8,6 +8,7 @@ import {
 import { HandlerResponse } from "../../models/handler-response";
 import { User } from "../../models/user";
 import { AuthService } from "../../services/auth-service";
+import { RequestVerificationService } from "../../services/request-verification-service";
 import { UserService } from "../../services/user-service";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 import { errorLogger } from "../../utils/error-logger";
@@ -41,6 +42,9 @@ const userPut: APIGatewayProxyHandler = async (
       ...body,
       userId: authId
     });
+
+    const requestVerificationService = new RequestVerificationService();
+    requestVerificationService.verifyUser(user);
   } catch (error) {
     errorLogger("Handler/User:Put", error);
     const response: HandlerResponse = responseBodyBuilder({
