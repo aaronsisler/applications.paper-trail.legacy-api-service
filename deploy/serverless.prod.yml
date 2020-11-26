@@ -39,6 +39,13 @@ functions:
       - http:
           path: /user
           method: post
+  user-put:
+    handler: dist/handlers/user-put-handler/index.handler
+    description: Retrieve user with OAuth token. Update user with given user information.
+    events:
+      - http:
+          path: /user
+          method: put
   transactions-get:
     handler: dist/handlers/transactions-get-handler/index.handler
     description: Retrieve user with OAuth token. Responds with user's transactions.
