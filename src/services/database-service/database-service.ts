@@ -4,7 +4,6 @@ import { ItemList } from "aws-sdk/clients/dynamodb";
 import { DatabaseItem } from "../../models/database-item";
 import { KeyValuePair } from "../../models/key-value-pair";
 import { errorLogger } from "../../utils/error-logger";
-// import { rawTransactions } from "../../mocks/raw-transactions";
 
 class DatabaseService {
   private documentClient: DynamoDB.DocumentClient;
