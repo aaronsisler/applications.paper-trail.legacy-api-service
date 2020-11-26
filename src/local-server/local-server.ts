@@ -9,6 +9,7 @@ import { User } from "../models/user";
 import { AuthService } from "../services/auth-service";
 import { DatabaseService } from "../services/database-service";
 import { HealthService } from "../services/health-service";
+import { RequestVerificationService } from "../services/request-verification-service";
 import { TransactionService } from "../services/transaction-service";
 import { UserService } from "../services/user-service";
 
@@ -44,9 +45,13 @@ app.get("/test-trans", async (req, res) => {
   try {
     const [transaction] = transactions;
     transaction.transactionId = transactionId;
-    transaction.amount = 567;
+    transaction.amount = undefined;
+    // transaction.transCategoryIds = [];
 
-    await transactionService.updateTransaction(userId, transaction);
+    const rvs = new RequestVerificationService();
+    rvs.verifyTransaction(transaction);
+
+    // await transactionService.updateTransaction(userId, transaction);
 
     return res.status(200).json("Worked");
   } catch (error) {

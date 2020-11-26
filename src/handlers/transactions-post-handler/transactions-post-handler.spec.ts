@@ -7,10 +7,17 @@ import { transactions } from "../../mocks/transactions";
 
 let mockGetAuthId: jest.Mock;
 let mockCreateTransaction: jest.Mock;
+let mockVerifyTransaction: jest.Mock;
 
 jest.mock("../../services/auth-service", () => ({
   AuthService: jest.fn(() => ({
     getAuthId: mockGetAuthId
+  }))
+}));
+
+jest.mock("../../services/request-verification-service", () => ({
+  RequestVerificationService: jest.fn(() => ({
+    verifyTransaction: mockVerifyTransaction
   }))
 }));
 
@@ -34,6 +41,11 @@ describe("Handlers/Transactions:Post", () => {
 
   beforeEach(async () => {
     callback = jest.fn();
+    mockCreateTransaction = jest.fn().mockResolvedValue(undefined);
+    mockVerifyTransaction = jest.fn();
+    event = {
+      body: JSON.stringify(rawTransactions[0])
+    };
   });
 
   describe("when a transaction is to be created", () => {
@@ -75,6 +87,9 @@ describe("Handlers/Transactions:Post", () => {
 
       describe("and when request is NOT valid", () => {
         beforeEach(async () => {
+          mockVerifyTransaction = jest.fn(() => {
+            throw new Error();
+          });
           await handler(event, undefined, callback);
         });
 
@@ -94,12 +109,6 @@ describe("Handlers/Transactions:Post", () => {
       });
 
       describe("and when request is valid", () => {
-        beforeEach(() => {
-          event = {
-            body: JSON.stringify(rawTransactions[0])
-          };
-        });
-
         describe("and when transaction is created", () => {
           beforeEach(async () => {
             mockCreateTransaction = jest.fn().mockResolvedValue(undefined);

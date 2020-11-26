@@ -20,13 +20,13 @@ export class Transaction {
   constructor(options?: {
     transactionId: string;
     amount: number;
-    sourceTransId?: string;
-    financialAccountId?: string;
-    transCategoryIds?: string[];
-    transDate?: string;
-    merchantName?: string;
-    merchantAltName?: string;
-    isPending?: boolean;
+    sourceTransId: string;
+    financialAccountId: string;
+    transCategoryIds: string[];
+    transDate: string;
+    merchantName: string;
+    merchantAltName: string;
+    isPending: boolean;
   }) {
     if (options) {
       this.transactionId = options.transactionId;
