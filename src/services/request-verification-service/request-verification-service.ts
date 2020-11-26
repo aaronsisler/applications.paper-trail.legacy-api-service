@@ -1,4 +1,5 @@
 import { Transaction } from "../../models/transaction";
+import { User } from "../../models/user";
 
 class RequestVerificationService {
   verifyTransaction = (transaction: Transaction): void => {
@@ -16,6 +17,16 @@ class RequestVerificationService {
 
     if (hasEmptyArrays) {
       throw new Error("Transaction has empty attribute arrays");
+    }
+  };
+
+  verifyUser = (user: User): void => {
+    const hasEmptyAttributes = Object.values(user).some(
+      (x) => x === null || x === undefined
+    );
+
+    if (hasEmptyAttributes) {
+      throw new Error("User has undefined attributes");
     }
   };
 }
