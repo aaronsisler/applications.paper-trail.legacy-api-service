@@ -7,6 +7,7 @@ import { errorLogger } from "../../utils/error-logger";
 
 let mockCreate: jest.Mock;
 let mockRead: jest.Mock;
+let mockUpdate: jest.Mock;
 
 jest.mock("../../config", () => ({ DATABASE_TABLE_USERS: "mock-users-table" }));
 
@@ -17,7 +18,8 @@ jest.mock("../../utils/error-logger", () => ({
 jest.mock("../../services/database-service", () => ({
   DatabaseService: jest.fn().mockImplementation(() => ({
     create: mockCreate,
-    read: mockRead
+    read: mockRead,
+    update: mockUpdate
   }))
 }));
 
@@ -153,6 +155,54 @@ describe("services/UserService", () => {
       it("should throw an error", async () => {
         await expect(userService.getUser("mock-user-id")).rejects.toThrowError(
           "User not found"
+        );
+      });
+
+      it("should log error messages correctly", () => {
+        expect(errorLogger).toHaveBeenCalledWith("UserService", expectedError);
+      });
+    });
+  });
+
+  describe("when a user is updated", () => {
+    describe("and the call is successful", () => {
+      beforeEach(async () => {
+        mockUpdate = jest.fn().mockResolvedValue(undefined);
+        userService = new UserService();
+        await userService.updateUser(userDetails);
+      });
+
+      it("should publish to the database using the correct parameters", () => {
+        expect(mockUpdate).toHaveBeenCalledWith(
+          "mock-users-table",
+          [mockUserIdKeyValuePair],
+          userDetails
+        );
+      });
+    });
+
+    describe("and the call is NOT successful", () => {
+      const expectedError = "mock-error";
+
+      beforeEach(async () => {
+        mockUpdate = jest.fn().mockRejectedValue(expectedError);
+        try {
+          userService = new UserService();
+          await userService.updateUser(userDetails);
+        } catch (error) {} // eslint-disable-line no-empty
+      });
+
+      it("should publish to the database using the correct parameters", () => {
+        expect(mockUpdate).toHaveBeenCalledWith(
+          "mock-users-table",
+          [mockUserIdKeyValuePair],
+          userDetails
+        );
+      });
+
+      it("should throw an error", async () => {
+        await expect(userService.updateUser(userDetails)).rejects.toThrowError(
+          "User not updated"
         );
       });
 
