@@ -2,7 +2,7 @@ import { RequestVerificationService } from "./index";
 import { transactions } from "../../mocks/transactions";
 import { userDetails } from "../../mocks/user-details";
 import { Transaction } from "../../models/transaction";
-import { User } from "../../models/User";
+import { User } from "../../models/user";
 
 describe("services/RequestVerificationService", () => {
   let requestVerificationService: RequestVerificationService;

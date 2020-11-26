@@ -1,5 +1,4 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable function-paren-newline */
+/* eslint-disable class-methods-use-this, function-paren-newline */
 import { Transaction } from "../../models/transaction";
 import { User } from "../../models/user";
 import { isStringEmpty } from "../../utils/string-utils";
