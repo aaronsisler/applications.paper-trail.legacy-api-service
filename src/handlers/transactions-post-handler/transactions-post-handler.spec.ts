@@ -41,8 +41,8 @@ describe("Handlers/Transactions:Post", () => {
 
   beforeEach(async () => {
     callback = jest.fn();
-    mockVerifyTransaction = jest.fn();
     mockCreateTransaction = jest.fn().mockResolvedValue(undefined);
+    mockVerifyTransaction = jest.fn();
     event = {
       body: JSON.stringify(rawTransactions[0])
     };
