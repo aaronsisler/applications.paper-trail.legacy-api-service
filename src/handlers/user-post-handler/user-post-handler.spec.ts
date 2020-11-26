@@ -6,10 +6,17 @@ import { rawUserDetails } from "../../mocks/raw-user-details";
 
 let mockGetAuthId: jest.Mock;
 let mockCreateUser: jest.Mock;
+let mockVerifyUser: jest.Mock;
 
 jest.mock("../../services/auth-service", () => ({
   AuthService: jest.fn(() => ({
     getAuthId: mockGetAuthId
+  }))
+}));
+
+jest.mock("../../services/request-verification-service", () => ({
+  RequestVerificationService: jest.fn(() => ({
+    verifyUser: mockVerifyUser
   }))
 }));
 
@@ -33,6 +40,8 @@ describe("Handlers/User:Post", () => {
 
   beforeEach(async () => {
     callback = jest.fn();
+    mockCreateUser = jest.fn().mockResolvedValue(undefined);
+    mockVerifyUser = jest.fn();
   });
 
   describe("when a user is to be created", () => {
@@ -73,6 +82,9 @@ describe("Handlers/User:Post", () => {
       });
       describe("and when request is NOT valid", () => {
         beforeEach(async () => {
+          mockVerifyUser = jest.fn(() => {
+            throw new Error();
+          });
           await handler(event, undefined, callback);
         });
 
@@ -100,7 +112,6 @@ describe("Handlers/User:Post", () => {
 
         describe("and when user is created", () => {
           beforeEach(async () => {
-            mockCreateUser = jest.fn().mockResolvedValue(undefined);
             await handler(event, undefined, callback);
           });
 
