@@ -7,7 +7,6 @@ import {
 } from "aws-lambda";
 import { HandlerResponse } from "../../models/handler-response";
 import { User } from "../../models/user";
-import { AuthService } from "../../services/auth-service";
 import { RequestVerificationService } from "../../services/request-verification-service";
 import { UserService } from "../../services/user-service";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
@@ -20,19 +19,19 @@ const userPut: APIGatewayProxyHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   let authId: string;
 
-  try {
-    const authService = new AuthService();
-    authId = await authService.getAuthId(event);
-  } catch (error) {
-    errorLogger("Handler/User:Put", error);
-    const response: HandlerResponse = responseBodyBuilder({
-      statusCode: 401,
-      body: "Unauthorized"
-    });
+  // try {
+  //   const authService = new AuthService();
+  //   authId = await authService.getAuthId(event);
+  // } catch (error) {
+  //   errorLogger("Handler/User:Put", error);
+  //   const response: HandlerResponse = responseBodyBuilder({
+  //     statusCode: 401,
+  //     body: "Unauthorized"
+  //   });
 
-    callback(null, response);
-    return;
-  }
+  //   callback(null, response);
+  //   return;
+  // }
 
   let user: User;
   try {

@@ -7,7 +7,6 @@ import {
 } from "aws-lambda";
 import { HandlerResponse } from "../../models/handler-response";
 import { Transaction } from "../../models/transaction";
-import { AuthService } from "../../services/auth-service";
 import { TransactionService } from "../../services/transaction-service";
 import { errorLogger } from "../../utils/error-logger";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
@@ -19,19 +18,19 @@ const transactionsGet: APIGatewayProxyHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   let authId: string;
 
-  try {
-    const authService = new AuthService();
-    authId = await authService.getAuthId(event);
-  } catch (error) {
-    errorLogger("Handler/Transactions:Get", error);
-    const response: HandlerResponse = responseBodyBuilder({
-      statusCode: 401,
-      body: "Unauthorized"
-    });
+  // try {
+  //   const authService = new AuthService();
+  //   authId = await authService.getAuthId(event);
+  // } catch (error) {
+  //   errorLogger("Handler/Transactions:Get", error);
+  //   const response: HandlerResponse = responseBodyBuilder({
+  //     statusCode: 401,
+  //     body: "Unauthorized"
+  //   });
 
-    callback(null, response);
-    return;
-  }
+  //   callback(null, response);
+  //   return;
+  // }
 
   try {
     const transactionService = new TransactionService();
@@ -45,6 +44,7 @@ const transactionsGet: APIGatewayProxyHandler = async (
     });
 
     callback(null, response);
+    return;
   } catch (error) {
     errorLogger("Handler/Transactions:Get", error);
     const response: HandlerResponse = responseBodyBuilder({

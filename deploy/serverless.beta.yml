@@ -18,6 +18,9 @@ provider:
     NODE_ENV: BETA
 
 functions:
+  authorizer:
+    handler: dist/handlers/authorizer-handler/index.handler
+    description: Lambda that checks token passed in Authorization header
   health:
     handler: dist/handlers/health-handler/index.handler
     description: Gateway health check. Responds with current time and a short message.
@@ -32,6 +35,11 @@ functions:
       - http:
           path: /user
           method: get
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   user-post:
     handler: dist/handlers/user-post-handler/index.handler
     description: Retrieve user with OAuth token. Create user with given user information.
