@@ -1,14 +1,14 @@
-import { envUtil } from "./index";
+import { getEnv } from "./index";
 
 describe("Utils/Env Utils", () => {
   it("should be a function", () => {
-    expect(typeof envUtil).toEqual("function");
+    expect(typeof getEnv).toEqual("function");
   });
 
   it("should return correctly", () => {
     process.env.NODE_ENV = "MOCK_ENV";
 
-    const resultEnv = envUtil();
+    const resultEnv = getEnv();
 
     expect(resultEnv).toEqual("MOCK_ENV");
 

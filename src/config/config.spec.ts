@@ -1,5 +1,9 @@
 import * as config from "./index";
 
+jest.mock("../utils/env-util", () => ({
+  getEnv: () => "MOCK_ENV"
+}));
+
 describe("config", () => {
   let configKeys: string[];
 
@@ -14,8 +18,14 @@ describe("config", () => {
   });
 
   it("should export the correct values", () => {
-    expect(config.DATABASE_TABLE_TRANSACTIONS).toBeDefined();
-    expect(config.DATABASE_TABLE_USERS).toBeDefined();
+    expect(config.DATABASE_TABLE_TRANSACTIONS).toEqual(
+      `PAPER_TRAIL_SERVICE_MOCK_ENV_TRANSACTIONS`
+    );
+
+    expect(config.DATABASE_TABLE_USERS).toEqual(
+      `PAPER_TRAIL_SERVICE_MOCK_ENV_USERS`
+    );
+
     expect(config.TOKEN_VALIDATION_URL).toBeDefined();
   });
 });

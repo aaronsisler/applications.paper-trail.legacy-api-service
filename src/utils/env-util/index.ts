@@ -1,3 +1,3 @@
-import { envUtil } from "./env-util";
+import { getEnv } from "./env-util";
 
-export { envUtil };
+export { getEnv };

@@ -1,6 +1,8 @@
+import { getEnv } from "../utils/env-util";
+
 // Database
-const DATABASE_TABLE_TRANSACTIONS = "PAPER_TRAIL_SERVICE_BETA_TRANSACTIONS";
-const DATABASE_TABLE_USERS = "PAPER_TRAIL_SERVICE_BETA_USERS";
+const DATABASE_TABLE_TRANSACTIONS = `PAPER_TRAIL_SERVICE_${getEnv()}_TRANSACTIONS`;
+const DATABASE_TABLE_USERS = `PAPER_TRAIL_SERVICE_${getEnv()}_USERS`;
 
 // Auth
 // const TOKEN_HEADER = "x-forwarded-google-oauth-token";

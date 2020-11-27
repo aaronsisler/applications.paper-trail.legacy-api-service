@@ -1,3 +1,3 @@
-const envUtil = (): string => process.env.NODE_ENV;
+const getEnv = (): string => process.env.NODE_ENV;
 
-export { envUtil };
+export { getEnv };
