@@ -15,7 +15,7 @@ provider:
       burstLimit: 20
       rateLimit: 10
   environment:
-    NODE_ENV: prod
+    NODE_ENV: PROD
 
 functions:
   health:
