@@ -21,10 +21,11 @@ jest.mock("../../utils/response-body-builder", () => ({
 describe("Handlers/User:Get", () => {
   let callback: Callback<APIGatewayProxyResult>;
   const event: any = undefined;
+  let mockGetAuthId: jest.SpyInstance;
 
   beforeEach(async () => {
     callback = jest.fn();
-    const mockGetAuthId = jest.spyOn(authIdUtil, "getAuthId");
+    mockGetAuthId = jest.spyOn(authIdUtil, "getAuthId");
     mockGetAuthId.mockImplementation(() => "mock-auth-id");
   });
 
@@ -36,7 +37,6 @@ describe("Handlers/User:Get", () => {
       };
 
       beforeEach(async () => {
-        const mockGetAuthId = jest.spyOn(authIdUtil, "getAuthId");
         mockGetAuthId.mockImplementation(() => {
           throw new Error("mock-error");
         });
