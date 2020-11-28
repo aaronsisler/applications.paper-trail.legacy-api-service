@@ -12,9 +12,7 @@ jest.mock("../../services/user-service", () => ({
   }))
 }));
 
-jest.mock("../../utils/error-logger", () => ({
-  errorLogger: jest.fn().mockReturnThis()
-}));
+jest.mock("../../utils/error-logger");
 
 jest.mock("../../utils/response-body-builder", () => ({
   responseBodyBuilder: jest.fn(() => "mock-body-built-response")
@@ -22,13 +20,12 @@ jest.mock("../../utils/response-body-builder", () => ({
 
 describe("Handlers/User:Get", () => {
   let callback: Callback<APIGatewayProxyResult>;
-  let event: any;
+  const event: any = undefined;
 
   beforeEach(async () => {
     callback = jest.fn();
     const mockGetAuthId = jest.spyOn(authIdUtil, "getAuthId");
     mockGetAuthId.mockImplementation(() => "mock-auth-id");
-    event = { requestContext: { authorizer: { principalId: "mock-auth-id" } } };
   });
 
   describe("when a user is requested", () => {
@@ -39,9 +36,6 @@ describe("Handlers/User:Get", () => {
       };
 
       beforeEach(async () => {
-        event = {
-          requestContext: { authorizer: { principalId: "taco" } }
-        };
         const mockGetAuthId = jest.spyOn(authIdUtil, "getAuthId");
         mockGetAuthId.mockImplementation(() => {
           throw new Error("mock-error");
