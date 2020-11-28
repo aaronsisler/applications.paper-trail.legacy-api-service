@@ -9,8 +9,9 @@ import { HandlerResponse } from "../../models/handler-response";
 import { User } from "../../models/user";
 import { RequestVerificationService } from "../../services/request-verification-service";
 import { UserService } from "../../services/user-service";
-import { responseBodyBuilder } from "../../utils/response-body-builder";
+import { getAuthId } from "../../utils/auth-id-util";
 import { errorLogger } from "../../utils/error-logger";
+import { responseBodyBuilder } from "../../utils/response-body-builder";
 
 const userPut: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent,
@@ -19,19 +20,18 @@ const userPut: APIGatewayProxyHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   let authId: string;
 
-  // try {
-  //   const authService = new AuthService();
-  //   authId = await authService.getAuthId(event);
-  // } catch (error) {
-  //   errorLogger("Handler/User:Put", error);
-  //   const response: HandlerResponse = responseBodyBuilder({
-  //     statusCode: 401,
-  //     body: "Unauthorized"
-  //   });
+  try {
+    authId = getAuthId(event);
+  } catch (error) {
+    errorLogger("Handler/User:Put", error);
+    const response: HandlerResponse = responseBodyBuilder({
+      statusCode: 401,
+      body: "Unauthorized"
+    });
 
-  //   callback(null, response);
-  //   return;
-  // }
+    callback(null, response);
+    return;
+  }
 
   let user: User;
   try {

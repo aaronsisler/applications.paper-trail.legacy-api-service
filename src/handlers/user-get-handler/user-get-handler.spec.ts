@@ -1,16 +1,10 @@
 import { APIGatewayProxyResult, Callback } from "aws-lambda";
 import { handler } from "./index";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
+import * as authIdUtil from "../../utils/auth-id-util";
 import { errorLogger } from "../../utils/error-logger";
 
-let mockGetAuthId: jest.Mock;
 let mockGetUser: jest.Mock;
-
-jest.mock("../../services/auth-service", () => ({
-  AuthService: jest.fn(() => ({
-    getAuthId: mockGetAuthId
-  }))
-}));
 
 jest.mock("../../services/user-service", () => ({
   UserService: jest.fn(() => ({
@@ -18,12 +12,12 @@ jest.mock("../../services/user-service", () => ({
   }))
 }));
 
-jest.mock("../../utils/response-body-builder", () => ({
-  responseBodyBuilder: jest.fn(() => "mock-body-built-response")
-}));
-
 jest.mock("../../utils/error-logger", () => ({
   errorLogger: jest.fn().mockReturnThis()
+}));
+
+jest.mock("../../utils/response-body-builder", () => ({
+  responseBodyBuilder: jest.fn(() => "mock-body-built-response")
 }));
 
 describe("Handlers/User:Get", () => {
@@ -32,6 +26,9 @@ describe("Handlers/User:Get", () => {
 
   beforeEach(async () => {
     callback = jest.fn();
+    const mockGetAuthId = jest.spyOn(authIdUtil, "getAuthId");
+    mockGetAuthId.mockImplementation(() => "mock-auth-id");
+    event = { requestContext: { authorizer: { principalId: "mock-auth-id" } } };
   });
 
   describe("when a user is requested", () => {
@@ -42,18 +39,24 @@ describe("Handlers/User:Get", () => {
       };
 
       beforeEach(async () => {
-        mockGetAuthId = jest.fn().mockRejectedValue("mock-error");
+        event = {
+          requestContext: { authorizer: { principalId: "taco" } }
+        };
+        const mockGetAuthId = jest.spyOn(authIdUtil, "getAuthId");
+        mockGetAuthId.mockImplementation(() => {
+          throw new Error("mock-error");
+        });
         await handler(event, undefined, callback);
       });
 
       it("should verify the request correctly", () => {
-        expect(mockGetAuthId).toHaveBeenCalledWith(event);
+        expect(authIdUtil.getAuthId).toHaveBeenCalledWith(event);
       });
 
       it("should log error messages correctly", () => {
         expect(errorLogger).toHaveBeenCalledWith(
           "Handler/User:Get",
-          "mock-error"
+          Error("mock-error")
         );
       });
 
@@ -67,10 +70,6 @@ describe("Handlers/User:Get", () => {
     });
 
     describe("and when authentication is successful", () => {
-      beforeEach(async () => {
-        mockGetAuthId = jest.fn().mockResolvedValue("mock-auth-id");
-      });
-
       describe("and a user is found", () => {
         beforeEach(async () => {
           mockGetUser = jest.fn().mockResolvedValue("mock-user");

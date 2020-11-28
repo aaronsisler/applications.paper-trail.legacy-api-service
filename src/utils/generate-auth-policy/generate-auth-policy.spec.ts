@@ -1,19 +1,31 @@
-import { getEnv } from "./index";
+import { generateAuthPolicy } from "./index";
 
-describe("Utils/Env Utils", () => {
+describe("Utils/Generate Auth Policy", () => {
   it("should be a function", () => {
-    expect(typeof getEnv).toEqual("function");
+    expect(typeof generateAuthPolicy).toEqual("function");
   });
 
+  const principalId = "mock-principal-id";
+  const effect = "Allow";
+  const resource = { mock: "attribute" };
+
+  const expectedResult = {
+    principalId,
+    policyDocument: {
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Action: "execute-api:Invoke",
+          Effect: effect,
+          Resource: resource
+        }
+      ]
+    }
+  };
+
   it("should return correctly", () => {
-    process.env.NODE_ENV = "MOCK_ENV";
+    const resultEnv = generateAuthPolicy(principalId, effect, resource);
 
-    const resultEnv = getEnv();
-
-    expect(resultEnv).toEqual("MOCK_ENV");
-
-    // Clearing out the environment variable
-    delete process.env.NODE_ENV;
-    expect(process.env.NODE_ENV).toBeUndefined();
+    expect(resultEnv).toEqual(expectedResult);
   });
 });

@@ -1,19 +1,52 @@
-import { getEnv } from "./index";
+import { getAuthId } from "./index";
 
-describe("Utils/Env Utils", () => {
+describe("Utils/Auth Id Util", () => {
+  let event: any;
+
   it("should be a function", () => {
-    expect(typeof getEnv).toEqual("function");
+    expect(typeof getAuthId).toEqual("function");
   });
 
-  it("should return correctly", () => {
-    process.env.NODE_ENV = "MOCK_ENV";
+  describe("when request is correct", () => {
+    describe("when principal id is populated correctly", () => {
+      it("should return correctly", () => {
+        event = {
+          requestContext: { authorizer: { principalId: "mock-principal-id" } }
+        };
+        const resultEnv = getAuthId(event);
 
-    const resultEnv = getEnv();
+        expect(resultEnv).toEqual("mock-principal-id");
+      });
+    });
 
-    expect(resultEnv).toEqual("MOCK_ENV");
+    describe("when principal id is NOT populated correctly", () => {
+      it("should throw an error", () => {
+        expect.assertions(1);
+        event = {
+          requestContext: { authorizer: { principalId: "" } }
+        };
 
-    // Clearing out the environment variable
-    delete process.env.NODE_ENV;
-    expect(process.env.NODE_ENV).toBeUndefined();
+        try {
+          getAuthId(event);
+        } catch (error) {
+          expect(error.message).toEqual("Principal Id is not populated");
+        }
+      });
+    });
+  });
+
+  describe("when request is NOT correct", () => {
+    it("should throw an error", () => {
+      expect.assertions(1);
+      event = {
+        requestContext: {}
+      };
+
+      try {
+        getAuthId(event);
+      } catch (error) {
+        expect(error.message).toEqual("Request is not correct");
+      }
+    });
   });
 });
