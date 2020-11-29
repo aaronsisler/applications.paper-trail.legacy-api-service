@@ -18,6 +18,9 @@ provider:
     NODE_ENV: PROD
 
 functions:
+  authorizer:
+    handler: dist/handlers/authorizer-handler/index.handler
+    description: Lambda that checks token passed in Authorization header
   health:
     handler: dist/handlers/health-handler/index.handler
     description: Gateway health check. Responds with current time and a short message.
@@ -32,6 +35,11 @@ functions:
       - http:
           path: /user
           method: get
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   user-post:
     handler: dist/handlers/user-post-handler/index.handler
     description: Retrieve user with OAuth token. Create user with given user information.
@@ -39,6 +47,11 @@ functions:
       - http:
           path: /user
           method: post
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   user-put:
     handler: dist/handlers/user-put-handler/index.handler
     description: Retrieve user with OAuth token. Update user with given user information.
@@ -46,6 +59,11 @@ functions:
       - http:
           path: /user
           method: put
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   transactions-get:
     handler: dist/handlers/transactions-get-handler/index.handler
     description: Retrieve user with OAuth token. Responds with user's transactions.
@@ -53,6 +71,11 @@ functions:
       - http:
           path: /transactions
           method: get
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   transactions-post:
     handler: dist/handlers/transactions-post-handler/index.handler
     description: Retrieve user with OAuth token. Create transaction for given user.
@@ -60,6 +83,11 @@ functions:
       - http:
           path: /transactions
           method: post
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   transactions-put:
     handler: dist/handlers/transactions-put-handler/index.handler
     description: Retrieve user with OAuth token. Update transaction for given user.
@@ -67,6 +95,11 @@ functions:
       - http:
           path: /transactions
           method: put
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
 
 plugins:
   - serverless-domain-manager
