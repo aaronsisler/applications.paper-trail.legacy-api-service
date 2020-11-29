@@ -1,28 +1,28 @@
 import axios from "axios";
-import { HandlerRequest } from "../../models/handler-request";
 import { AuthService } from "./index";
 import { errorLogger } from "../../utils/error-logger";
+import * as stringUtils from "../../utils/string-utils";
+
+jest.mock("axios", () => ({ get: jest.fn() }));
 
 jest.mock("../../config", () => ({
   TOKEN_HEADER: "mock-token-header",
   TOKEN_VALIDATION_URL: "mock-token-validation-url"
 }));
 
-jest.mock("axios", () => ({ get: jest.fn() }));
-
-jest.mock("../../utils/error-logger", () => ({
-  errorLogger: jest.fn().mockReturnThis()
-}));
+jest.mock("../../utils/error-logger");
 
 describe("services/AuthService", () => {
   let authService: AuthService;
   let returnedAuthId: string;
+  let mockIsStringEmpty: jest.SpyInstance;
 
   beforeEach(() => {
     authService = new AuthService();
+    mockIsStringEmpty = jest.spyOn(stringUtils, "isStringEmpty");
   });
 
-  afterAll(() => {
+  afterEach(() => {
     jest.resetAllMocks();
   });
 
@@ -32,17 +32,15 @@ describe("services/AuthService", () => {
   });
 
   describe("when an authentication id is requested", () => {
-    describe("and the request is valid", () => {
-      const mockRequest: HandlerRequest = {
-        headers: { Authorization: "mock-token-header mock-token" }
-      };
+    describe("and the auth header is valid", () => {
+      const authToken = "mock-token-bearer mock-token";
 
       describe("and the validation request is successful", () => {
         beforeEach(async () => {
           axios.get = jest
             .fn()
             .mockResolvedValue({ data: { sub: "mock-sub" } });
-          returnedAuthId = await authService.getAuthId(mockRequest);
+          returnedAuthId = await authService.getAuthId(authToken);
         });
 
         it("should call the validation endpoint with correct parameter", () => {
@@ -62,7 +60,7 @@ describe("services/AuthService", () => {
         beforeEach(async () => {
           axios.get = jest.fn().mockRejectedValue(expectedError);
           try {
-            await authService.getAuthId(mockRequest);
+            await authService.getAuthId(authToken);
           } catch (error) {} // eslint-disable-line no-empty
         });
 
@@ -73,7 +71,7 @@ describe("services/AuthService", () => {
         });
 
         it("should throw an error", async () => {
-          await expect(authService.getAuthId(mockRequest)).rejects.toThrowError(
+          await expect(authService.getAuthId(authToken)).rejects.toThrowError(
             "OAuth token not valid"
           );
         });
@@ -87,48 +85,43 @@ describe("services/AuthService", () => {
       });
     });
 
-    describe("and the request is NOT valid", () => {
-      describe("and headers does NOT contain correct header", () => {
-        const mockRequest: HandlerRequest = { headers: {} };
+    describe("and the auth header is NOT valid", () => {
+      describe("and auth header is NOT formatted correctly", () => {
+        const authToken = "";
 
-        it("should throw an error", async () => {
-          await expect(authService.getAuthId(mockRequest)).rejects.toThrowError(
-            "No token found in headers"
-          );
+        beforeEach(() => {
+          mockIsStringEmpty.mockImplementation(() => {
+            throw new Error("mock-string-empty-error");
+          });
         });
 
-        it("should log error messages correctly", async () => {
-          try {
-            await authService.getAuthId(mockRequest);
-          } catch (error) {} // eslint-disable-line no-empty
-
-          expect(errorLogger).toHaveBeenCalledWith(
-            "AuthService",
-            "No token found in headers"
+        it("should throw an error", async () => {
+          await expect(authService.getAuthId(authToken)).rejects.toThrowError(
+            "mock-string-empty-error"
           );
         });
       });
 
-      describe("and authentication header is NOT valid", () => {
-        const mockRequest: HandlerRequest = {
-          headers: { Authorization: "mock-header-empty-token " } // Trailing space is correct here
-        };
+      describe("and auth header is formatted correctly", () => {
+        describe("and auth token is empty", () => {
+          const authToken = "trailing_space_intentional ";
 
-        it("should throw an error", async () => {
-          await expect(authService.getAuthId(mockRequest)).rejects.toThrowError(
-            "Token cannot be empty"
-          );
-        });
+          it("should throw an error", async () => {
+            await expect(authService.getAuthId(authToken)).rejects.toThrowError(
+              "Token cannot be empty"
+            );
+          });
 
-        it("should log error messages correctly", async () => {
-          try {
-            await authService.getAuthId(mockRequest);
-          } catch (error) {} // eslint-disable-line no-empty
+          it("should log error messages correctly", async () => {
+            try {
+              await authService.getAuthId(authToken);
+            } catch (error) {} // eslint-disable-line no-empty
 
-          expect(errorLogger).toHaveBeenCalledWith(
-            "AuthService",
-            "Token cannot be empty"
-          );
+            expect(errorLogger).toHaveBeenCalledWith(
+              "AuthService",
+              "Token cannot be empty"
+            );
+          });
         });
       });
     });

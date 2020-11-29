@@ -1,18 +1,13 @@
 import axios from "axios";
-import { errorLogger } from "../../utils/error-logger";
 import { TOKEN_VALIDATION_URL } from "../../config";
+import { errorLogger } from "../../utils/error-logger";
+import { isStringEmpty } from "../../utils/string-utils";
 
 class AuthService {
   async getAuthId(authHeader: string): Promise<string> {
-    let token: string;
+    isStringEmpty(authHeader);
 
-    try {
-      [, token] = authHeader.split(" ");
-    } catch (error) {
-      errorLogger("AuthService", "No token found in headers");
-      throw new Error("No token found in headers");
-    }
-
+    const [, token] = authHeader.split(" ");
     if (!token) {
       errorLogger("AuthService", "Token cannot be empty");
       throw new Error("Token cannot be empty");
