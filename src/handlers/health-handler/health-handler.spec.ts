@@ -43,7 +43,7 @@ describe("handlers/health", () => {
       expect(responseBodyBuilder).toHaveBeenCalledWith(mockResponse);
     });
 
-    it("should envoke callback with correct arguments", () => {
+    it("should invoke callback with correct arguments", () => {
       expect(callback).toHaveBeenCalledWith(null, "mock-built-response");
     });
   });

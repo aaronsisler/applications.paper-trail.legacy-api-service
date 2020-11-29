@@ -1,16 +1,10 @@
 import { APIGatewayProxyResult, Callback } from "aws-lambda";
 import { handler } from "./index";
-import { responseBodyBuilder } from "../../utils/response-body-builder";
+import * as authIdUtil from "../../utils/auth-id-util";
 import { errorLogger } from "../../utils/error-logger";
+import { responseBodyBuilder } from "../../utils/response-body-builder";
 
-let mockGetAuthId: jest.Mock;
 let mockGetTransactions: jest.Mock;
-
-jest.mock("../../services/auth-service", () => ({
-  AuthService: jest.fn(() => ({
-    getAuthId: mockGetAuthId
-  }))
-}));
 
 jest.mock("../../services/transaction-service", () => ({
   TransactionService: jest.fn(() => ({
@@ -18,20 +12,22 @@ jest.mock("../../services/transaction-service", () => ({
   }))
 }));
 
+jest.mock("../../utils/error-logger");
+
 jest.mock("../../utils/response-body-builder", () => ({
   responseBodyBuilder: jest.fn(() => "mock-body-built-response")
-}));
-
-jest.mock("../../utils/error-logger", () => ({
-  errorLogger: jest.fn().mockReturnThis()
 }));
 
 describe("handlers/transactions-get", () => {
   let callback: Callback<APIGatewayProxyResult>;
   let event: any;
+  let mockGetAuthId: jest.SpyInstance;
 
   beforeEach(async () => {
     callback = jest.fn();
+    mockGetTransactions = jest.fn();
+    mockGetAuthId = jest.spyOn(authIdUtil, "getAuthId");
+    mockGetAuthId.mockImplementation(() => "mock-auth-id");
   });
 
   describe("when transactions are requested", () => {
@@ -42,7 +38,9 @@ describe("handlers/transactions-get", () => {
       };
 
       beforeEach(async () => {
-        mockGetAuthId = jest.fn().mockRejectedValue("mock-error");
+        mockGetAuthId.mockImplementation(() => {
+          throw new Error("mock-error");
+        });
         await handler(event, undefined, callback);
       });
 
@@ -53,7 +51,7 @@ describe("handlers/transactions-get", () => {
       it("should log error messages correctly", () => {
         expect(errorLogger).toHaveBeenCalledWith(
           "Handler/Transactions:Get",
-          "mock-error"
+          Error("mock-error")
         );
       });
 
@@ -67,11 +65,6 @@ describe("handlers/transactions-get", () => {
     });
 
     describe("and when authentication is successful", () => {
-      beforeEach(() => {
-        mockGetAuthId = jest.fn().mockResolvedValue("mock-auth-id");
-        mockGetTransactions = jest.fn();
-      });
-
       describe("and when transactions are found", () => {
         beforeEach(async () => {
           mockGetTransactions = jest

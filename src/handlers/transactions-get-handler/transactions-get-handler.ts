@@ -7,8 +7,8 @@ import {
 } from "aws-lambda";
 import { HandlerResponse } from "../../models/handler-response";
 import { Transaction } from "../../models/transaction";
-import { AuthService } from "../../services/auth-service";
 import { TransactionService } from "../../services/transaction-service";
+import { getAuthId } from "../../utils/auth-id-util";
 import { errorLogger } from "../../utils/error-logger";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
 
@@ -20,8 +20,7 @@ const transactionsGet: APIGatewayProxyHandler = async (
   let authId: string;
 
   try {
-    const authService = new AuthService();
-    authId = await authService.getAuthId(event);
+    authId = getAuthId(event);
   } catch (error) {
     errorLogger("Handler/Transactions:Get", error);
     const response: HandlerResponse = responseBodyBuilder({
@@ -45,6 +44,7 @@ const transactionsGet: APIGatewayProxyHandler = async (
     });
 
     callback(null, response);
+    return;
   } catch (error) {
     errorLogger("Handler/Transactions:Get", error);
     const response: HandlerResponse = responseBodyBuilder({

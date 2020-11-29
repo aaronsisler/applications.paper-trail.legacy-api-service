@@ -8,8 +8,8 @@ import {
 import { HandlerResponse } from "../../models/handler-response";
 import { User } from "../../models/user";
 import { responseBodyBuilder } from "../../utils/response-body-builder";
-import { AuthService } from "../../services/auth-service";
 import { UserService } from "../../services/user-service";
+import { getAuthId } from "../../utils/auth-id-util";
 import { errorLogger } from "../../utils/error-logger";
 
 const userGet: APIGatewayProxyHandler = async (
@@ -20,8 +20,7 @@ const userGet: APIGatewayProxyHandler = async (
   let authId: string;
 
   try {
-    const authService = new AuthService();
-    authId = await authService.getAuthId(event);
+    authId = getAuthId(event);
   } catch (error) {
     errorLogger("Handler/User:Get", error);
     const response: HandlerResponse = responseBodyBuilder({
@@ -43,6 +42,7 @@ const userGet: APIGatewayProxyHandler = async (
     });
 
     callback(null, response);
+    return;
   } catch (error) {
     errorLogger("Handler/User:Get", error);
     const response: HandlerResponse = responseBodyBuilder({

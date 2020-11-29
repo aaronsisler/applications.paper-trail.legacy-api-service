@@ -7,11 +7,11 @@ import {
 } from "aws-lambda";
 import { HandlerResponse } from "../../models/handler-response";
 import { User } from "../../models/user";
-import { AuthService } from "../../services/auth-service";
 import { RequestVerificationService } from "../../services/request-verification-service";
 import { UserService } from "../../services/user-service";
-import { responseBodyBuilder } from "../../utils/response-body-builder";
+import { getAuthId } from "../../utils/auth-id-util";
 import { errorLogger } from "../../utils/error-logger";
+import { responseBodyBuilder } from "../../utils/response-body-builder";
 
 const userPost: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent,
@@ -21,8 +21,7 @@ const userPost: APIGatewayProxyHandler = async (
   let authId: string;
 
   try {
-    const authService = new AuthService();
-    authId = await authService.getAuthId(event);
+    authId = getAuthId(event);
   } catch (error) {
     errorLogger("Handler/User:Post", error);
     const response: HandlerResponse = responseBodyBuilder({
